@@ -35,17 +35,22 @@ if (isset($_POST['reg_user'])) {
     }
   }
 
-
   // Finally, REGISTER user if there are no errors in the form
   if(array_filter($errors_registration)){
 
   } else {
-      $password = md5($password_1);//encrypt the password before saving in the database
-      $_SESSION['username'] = $username;
-      $_SESSION['email'] = $email;
-      $_SESSION['password'] = $password;
-      $_SESSION['userdata'] = mysqli_fetch_assoc($results);
-  	  header('location: register2.php');
+
+  	$password = md5($password_1);//encrypt the password before saving in the database
+
+  	$query = "INSERT INTO User (Username, Email, Password)
+  			  VALUES('$username', '$email', '$password')";
+  	mysqli_query($db, $query) or die(mysqli_error($db));
+    $query = "SELECT * FROM User WHERE Username='$username' ";
+    $results = mysqli_query($db, $query);
+  	$_SESSION['username'] = $username;
+  	$_SESSION['success'] = "You are now logged in";
+    $_SESSION['userdata'] = mysqli_fetch_assoc($results);
+  	header('location: index.php');
   }
 }
 
@@ -71,8 +76,7 @@ if (isset($_POST['reg_user'])) {
 
     <nav style="background-color: rgba(0,0,0,.2);" class="navbar navbar-light navbar-fixed-top" style="background-color: #45B8AC;">
     <div class="navbar-header">
-      <a style="color: white;"class="navbar-brand" href="index.html"><img style="width:150px;" src="img/tidytubes.png" alt="Logo"></a></div>
-
+      <a style="color: white;"class="navbar-brand" href="index.html">TIDYTUBES</a></div>
     </div>
     </nav>
 
