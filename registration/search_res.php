@@ -18,8 +18,7 @@ if (isset($_POST['simple_search'])) {
 						'";
 
 
-}
-// ADVANCED SEARCH -------------------------------------------------------------
+} // ADVANCED SEARCH -------------------------------------------------------------
 elseif (isset($_POST['reg_search'])) {
 	//receive all input variables from the serach form
 	$samplename = mysqli_real_escape_string($db, $_POST['samplename']);
@@ -67,7 +66,8 @@ if ($results->num_rows > 0) {
 	echo "<table border='1' cellspacing='5' cellpadding='4' id='resultTable' style='width:80%'>
 					<thead>
 						<tr>
-							<th echo onclick='sortTable(0)'>Name</th>
+
+							<th onclick='sortTable(0)'>Name</th>
 							<th onclick='sortTable(1)'>Cell Type</th>
 							<th onclick='sortTable(2)'>Freezer name</th>
 							<th onclick='sortTable(3)'>Freezer Location</th>
@@ -82,7 +82,6 @@ if ($results->num_rows > 0) {
 						</tr>
 					</thead>
 					<tbody>";
-
 
 	while($row = $results->fetch_assoc()) {
 
@@ -119,11 +118,9 @@ if ($results->num_rows > 0) {
 
 		$table .= "<td>" . $idOwner . "</td>";
 		$table .= "<td>" . $row["Comment"] . 	"</td>";
-		$table .=	"<td> <form action='delete.php' method='post'>
-											<div>
-									    <button name = delete_entry type='submit'>Delete</button>
-									  </div>
-										<input type='hidden' name='idSample' value=".$row['idSample']." />
+		$table .=	"<td> <form name='delete_entry' action='delete.php' method='post'>
+										<input type='submit' name='delete_entry' value='Delete' />
+										<input type='hidden' name='idSample' value="; echo $row["idSample"]; "/>
 		            </form>
 		          </td>";
 		$table .= "</tr>";
@@ -132,6 +129,15 @@ if ($results->num_rows > 0) {
 
 }
 $table .= "</ol>";
+
+// // DELETE AN ENTRY
+// if (isset($_POST['delete_entry'])) {
+// 	$queryDelete = "DELETE FROM Sample WHERE idSample = $idSample"
+// 	$
+// }
+//
+// 	//Define the query
+// 	$query = "DELETE FROM Sample WHERE idSample={$_POST['idSample']}";
 
 
 ?>
@@ -162,20 +168,15 @@ $table .= "</ol>";
 				<?php echo $table ?>
 
 			</div>
-		</div>
-		<div class = "container">
-			<form method="post" action="search.php">
-				<div class="input-group">
-					<button class="btn btn-success">New advanced Search</button>
-				</div>
-			</form>
-      <form method="post" action="index.php">
-				<div class="input-group">
-					<button class="btn btn-success">Back to Home</button>
-				</div>
-			</form>
-		</div>
 
+			<form action="/search.php" method="post">
+				<div class="input-group">
+
+					<button type="submit" class="btn btn-success" name"newsearch" id="newsearch" href="search.php">New Search</button>
+					<button type="submit" class="btn btn-success" name"home" id="home" formacion="/index.php">Go to Home</button>
+				</div>
+			</form>
+	</div>
 
 	<?php include('footer.html') ?>
 
