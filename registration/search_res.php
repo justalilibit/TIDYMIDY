@@ -169,11 +169,11 @@ $table .= "</ol>";
 
 			</div>
 
-			<form action="/search.php" method="post">
+			<form action="TIDYMIDY/registration/" method="post">
 				<div class="input-group">
 
 					<button type="submit" class="btn btn-success" name"newsearch" id="newsearch" href="search.php">New Search</button>
-					<button type="submit" class="btn btn-success" name"home" id="home" formacion="/index.php">Go to Home</button>
+					<button type="submit" class="btn btn-success" name"home" id="home" href="index.php">Go to Home</button>
 				</div>
 			</form>
 	</div>
