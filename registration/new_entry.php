@@ -3,6 +3,8 @@
 include('server.php');
 
 print("<br><br><br><br>");
+print("Session user data array:");
+print_r($_SESSION["userdata"]);
 
 # GET STORAGEIDs CONNECTED TO CURRENT USER ------------------------------------#
 $ls_idStorages = array(); // array holding the storageIDs of our current user

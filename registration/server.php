@@ -11,14 +11,12 @@ $errors = array();
 $samplename = $celltype = $idfreezer = $rack = $position = $amount = $frozendate = $availability = $comment = $Location = $Contact_email = $Full_name = $Contact_phone = $Position = $Main_task = $Find_me = $Institute = '';
 $errors_registration = array('username' => '', 'email' => '', 'password_1' => '', 'password_2' => '', 'fullname' => '', 'cemail' => '', 'cphone' => '');
 // connect to the database
-$db = mysqli_connect('localhost', 'albert', '/Puiyuaru1616', 'mydb');
+# $db = mysqli_connect('localhost', 'albert', '/Puiyuaru1616', 'mydb');   # albert pw
+$db = mysqli_connect('localhost', 'tidytubes', 'Welcome123%', 'mydb');    # jo & lili pw
+
 
 $idSample = $samplename = $celltype = $idfreezer = $rack = $position = $amount = $frozendate = $availability = $idOwner = $comment = '';
 $idStorage = $storagename = $location = "";
-
-// connect to the database
-# $db = mysqli_connect('localhost', 'albert', '/Puiyuaru1616', 'mydb');   # albert pw
-// $db = mysqli_connect('localhost', 'tidytubes', 'Welcome123%', 'mydb');    # jo & lili pw
 
 
 // NEW SEARCH

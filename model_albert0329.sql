@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Sample` (
   `Availability` VARCHAR(45) NULL,
   `Comment` VARCHAR(300) NULL,
   `Position` VARCHAR(45) NULL,
-  `Rack` VARCHAR(45) NULL,
   `idUser` INT NOT NULL,
   `idStorage` INT NOT NULL,
   PRIMARY KEY (`idSample`),

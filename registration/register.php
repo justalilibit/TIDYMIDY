@@ -44,7 +44,7 @@ if (isset($_POST['reg_user'])) {
       $_SESSION['username'] = $username;
       $_SESSION['email'] = $email;
       $_SESSION['password'] = $password;
-      $_SESSION['userdata'] = mysqli_fetch_assoc($results);
+      $_SESSION['userdata'] = mysqli_fetch_assoc($result);
   	  header('location: register2.php');
   }
 }
