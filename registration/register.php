@@ -39,18 +39,20 @@ if (isset($_POST['reg_user'])) {
   if(array_filter($errors_registration)){
 
   } else {
+      $password = md5($password_1);//encrypt the password before saving in the database
+    
+#      	$query = "INSERT INTO User (Username, Email, Password)
+#  			  VALUES('$username', '$email', '$password')";
+#  	mysqli_query($db, $query) or die(mysqli_error($db));
+# $results = mysqli_query($db, $query);
+    
+    
+      $_SESSION['username'] = $username;
+      $_SESSION['email'] = $email;
+      $_SESSION['password'] = $password;
+      $_SESSION['userdata'] = mysqli_fetch_assoc($result);
+  	  header('location: register2.php');
 
-  	$password = md5($password_1);//encrypt the password before saving in the database
-
-  	$query = "INSERT INTO User (Username, Email, Password)
-  			  VALUES('$username', '$email', '$password')";
-  	mysqli_query($db, $query) or die(mysqli_error($db));
-    $query = "SELECT * FROM User WHERE Username='$username' ";
-    $results = mysqli_query($db, $query);
-  	$_SESSION['username'] = $username;
-  	$_SESSION['success'] = "You are now logged in";
-    $_SESSION['userdata'] = mysqli_fetch_assoc($results);
-  	header('location: index.php');
   }
 }
 

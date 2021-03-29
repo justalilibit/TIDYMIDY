@@ -2,7 +2,89 @@
 
 include('server.php');
 
-// NEW ENTRY
+print("<br><br><br><br>");
+print("Session user data array:");
+print_r($_SESSION["userdata"]);
+
+# GET STORAGEIDs CONNECTED TO CURRENT USER ------------------------------------#
+$ls_idStorages = array(); // array holding the storageIDs of our current user
+$query_storageids = "SELECT * FROM User_has_Storage
+                      WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+                        ";
+$resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
+
+while ($foundID = $resStorIDs->fetch_assoc()) {
+  $idnumber = $foundID['Storage_idStorage'];
+  array_push($ls_idStorages, $idnumber);
+}
+
+
+// User creates new Storage
+if (isset($_POST['reg_storage'])) {
+  #printf("INSIDE STORAGE");
+  $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
+  if (empty($storagename)) { array_push($errors, "ID storage is required"); }
+
+  if (count($errors) == 0) {
+    // Query to see if Storage already exists
+    $queryStoExis = "SELECT * FROM Storage
+                      WHERE Storagename = '$storagename'";
+    $resStorExis = mysqli_query($db,$queryStoExis) or die(mysqli_error($db));
+
+    if(!empty($resStorExis));
+      // if Storage already exists link its id to Userid
+      connectUserStorage($db, $resStorExis);
+
+  } else { // storage does not exist yet. Create entry and connect with User
+    // CREATE NEW STORAGE
+    $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
+    $location = mysqli_real_escape_string($db, $_POST['Location']);
+    print($storagename); print($location);
+    // $queryConnectU_S = "INSERT INTO User_has_Storage (User_idUser, Storage_idStorage)
+    //           VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idStorage')";
+    // mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
+
+  }
+}
+//
+$t = array();
+
+// ADD EXISTING STORAGE
+if (isset($_POST['add_storage'])) {
+  print("ADDED STORAGE PRESSED<br>");
+  $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
+  if (empty($storagename)) {
+    array_push($errors, "ID storage is required"); }
+
+  if (count($errors) == 0) {
+    // Query to see if Storage already exists
+    $queryStoExis = "SELECT * FROM Storage
+                      WHERE Storagename = '$storagename'";
+    $resStorExis = mysqli_query($db,$queryStoExis) or die(mysqli_error($db));
+
+    if(!empty($resStorExis)); // if Storage already exists link its id to Userid
+      connectUserStorage($db, $resStorExis);
+  } else{
+   array_push($errors, "This Storage is not yet registered in the System. Make a new entry using 'Create New Storage'");;
+ }
+}
+
+# FUNCTION connecting current User to Storage that fits the prerun query ------#
+ function connectUserStorage($db, $res_foundStor) {
+   $idStorage ="";
+   while($storage = $res_foundStor->fetch_assoc()){
+     $idStorage = $storage["idStorage"];
+   }
+   // create query for connecting User and Freeezer and run it
+   $queryConnectU_S = "INSERT INTO User_has_Storage (User_idUser, Storage_idStorage)
+             VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idStorage')";
+   mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
+ }
+
+
+# CREATE A NEW ENTRY #--------------------------------------------------------#
+
+
 if (isset($_POST['reg_entry'])) {
 
   // receive all input values from the entry form
@@ -36,44 +118,6 @@ if (isset($_POST['reg_entry'])) {
 
   }
 }
-
-
-
-if (isset($_POST['reg_storage'])) {
-  #print_r("<br><br><br><br><br><br>");
-  #printf("INSIDE STORAGE");
-  $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
-  print($storagename);
-  if (empty($storagename)) { array_push($errors, "ID storage is required"); }
-  if (count($errors) == 0) {
-  	$query = "INSERT INTO Storage (Storagename)
-  			  VALUES ('$storagename')";
-        }
-        #print($query);
-        mysqli_query($db, $query) or die(mysqli_error($db));
-      }
-
-$t = array();
-
-
-if (isset($_POST['add_storage'])) {
-    $Addstorage = mysqli_real_escape_string($db, $_POST['Addstorage']);
-    echo ("INSIDE ADD STORAGE<br><br><br><br>");
-    // check if the storage exists in the database
-    $check_storage = "SELECT idStorage FROM Storage WHERE idStorage='$Addstorage'";
-    $result_storage = mysqli_query($db, $check_storage);
-    if(mysqli_num_rows($result_storage) >0){
-          $sql = "SELECT * from Storage";
-          $res_st = mysqli_query($db,$sql);
-          array_push($t,$res_st);
-                    echo "found";
-
-
-    }else{
-
-   //
-   echo "not found";
- }}
 
 
 
