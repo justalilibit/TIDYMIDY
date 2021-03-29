@@ -108,58 +108,11 @@ if (isset($_POST['add_storage'])) {
      # print($query);
      mysqli_query($db, $query) or die(mysqli_error($db));
 
-<<<<<<< HEAD
+
    }
  }
  # END: CREATE A NEW ENTRY #----------------------------------------------------#
 
-
-
-=======
-# CREATE A NEW ENTRY #--------------------------------------------------------#
-if (isset($_POST['reg_entry'])) {
-  // receive all input values from the entry form
-  $samplename = mysqli_real_escape_string($db, $_POST['samplename']);
-  $celltype = mysqli_real_escape_string($db, $_POST['celltype']);
-
-  // $idfreezer = mysqli_real_escape_string($db, $_POST['idfreezer']);
-
-
-  $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
-  $idStorage = mysqli_real_escape_string($db, $_POST['idStorage']);
-  $rack = mysqli_real_escape_string($db, $_POST['rack']);
-
-
-  $position = mysqli_real_escape_string($db, $_POST['position']);
-  $amount = mysqli_real_escape_string($db, $_POST['amount']);
-  $frozendate = mysqli_real_escape_string($db, $_POST['frozendate']);
-  $availability = mysqli_real_escape_string($db, $_POST['availability']);
-  $comment = mysqli_real_escape_string($db, $_POST['comment']);
-
-  // entry validation: ensure that the form is correctly filled ...
-  // by adding (array_push()) corresponding error unto $errors array
-  if (empty($samplename)) { array_push($errors, "Sample name is required"); }
-  if (empty($celltype)) { array_push($errors, "Cell type is required"); }
-  // if (empty($idfreezer)) { array_push($errors, "Freezer is required"); }
-  if (empty($position)) { array_push($errors, "Position is required"); }
-  // if (empty($amount)) { array_push($errors, "Amount is required"); }
-  if (empty($frozendate)) { array_push($errors, "Frozen date is required"); }
-
-
-  // Finally, add the new entry in the sample table
-  if (count($errors) == 0) {
-
-
-  	$query = "INSERT INTO Sample (Name, Cell_type, idStorage, Rack, Position, Frozendate, Amount, Availability, Comment, idUser)
-  			  VALUES('$samplename', '$celltype', '$idStorage', '$rack', '$position', '$frozendate', '$amount', '$availability', '$comment','".$_SESSION["userdata"]["idUser"]."')";
-    # print("<br><br><br>");
-    # print($query);
-    mysqli_query($db, $query) or die(mysqli_error($db));
-
-  }
-}
-# END: CREATE A NEW ENTRY #----------------------------------------------------#
->>>>>>> a2c38a27619cbb48a04cf5b4488d152ea16fd4ac
 
 ?>
 <!DOCTYPE html>
