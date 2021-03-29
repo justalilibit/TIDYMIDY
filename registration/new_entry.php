@@ -3,8 +3,6 @@
 include('server.php');
 
 print("<br><br><br><br>");
-print("Session user data array:");
-print_r($_SESSION["userdata"]);
 
 # GET STORAGEIDs CONNECTED TO CURRENT USER ------------------------------------#
 $ls_idStorages = array(); // array holding the storageIDs of our current user
@@ -19,37 +17,37 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
 }
 
 
-// User creates new Storage
+# CREATE A NEW STORAGE ENTRY --------------------------------------------------#
 if (isset($_POST['reg_storage'])) {
   #printf("INSIDE STORAGE");
   $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
   if (empty($storagename)) { array_push($errors, "ID storage is required"); }
 
   if (count($errors) == 0) {
-    // Query to see if Storage already exists
     $queryStoExis = "SELECT * FROM Storage
-                      WHERE Storagename = '$storagename'";
+                      WHERE Storagename = '$storagename'"; // Check see if Storage already exists
     $resStorExis = mysqli_query($db,$queryStoExis) or die(mysqli_error($db));
 
-    if(!empty($resStorExis));
-      // if Storage already exists link its id to Userid
-      connectUserStorage($db, $resStorExis);
+    if(!empty($resStorExis)) { // Storagename already exists
+      array_push($errors, "Cannot create new Storage! A storage with this name already exists. Click 'Add existing storage' or choose different name");
 
-  } else { // storage does not exist yet. Create entry and connect with User
+    } else { // storagename does not exist yet. Create entry and connect with User
     // CREATE NEW STORAGE
     $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
     $location = mysqli_real_escape_string($db, $_POST['Location']);
     print($storagename); print($location);
+  #  $query_newstorage = "INSERT INTO Storage ()";
+    }
     // $queryConnectU_S = "INSERT INTO User_has_Storage (User_idUser, Storage_idStorage)
-    //           VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idStorage')";
-    // mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
+    //            VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idStorage')";
+    //  mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
 
   }
 }
-//
+
 $t = array();
 
-// ADD EXISTING STORAGE
+# ADD AN EXISTING STORAGE ENTRY -----------------------------------------------#
 if (isset($_POST['add_storage'])) {
   print("ADDED STORAGE PRESSED<br>");
   $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
@@ -81,50 +79,40 @@ if (isset($_POST['add_storage'])) {
    mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
  }
 
+ # CREATE A NEW ENTRY #--------------------------------------------------------#
+ if (isset($_POST['reg_entry'])) {
+   // receive all input values from the entry form
+   $samplename = mysqli_real_escape_string($db, $_POST['samplename']);
+   $celltype = mysqli_real_escape_string($db, $_POST['celltype']);
+   $idStorage = mysqli_real_escape_string($db, $_POST['idStorage']);
+   $position = mysqli_real_escape_string($db, $_POST['position']);
+   $amount = mysqli_real_escape_string($db, $_POST['amount']);
+   $frozendate = mysqli_real_escape_string($db, $_POST['frozendate']);
+   $availability = mysqli_real_escape_string($db, $_POST['availability']);
+   $comment = mysqli_real_escape_string($db, $_POST['comment']);
 
-# CREATE A NEW ENTRY #--------------------------------------------------------#
-if (isset($_POST['reg_entry'])) {
-  // receive all input values from the entry form
-  $samplename = mysqli_real_escape_string($db, $_POST['samplename']);
-  $celltype = mysqli_real_escape_string($db, $_POST['celltype']);
-
-  // $idfreezer = mysqli_real_escape_string($db, $_POST['idfreezer']);
-
-
-  $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
-  $idStorage = mysqli_real_escape_string($db, $_POST['idStorage']);
-  $rack = mysqli_real_escape_string($db, $_POST['rack']);
-
-
-  $position = mysqli_real_escape_string($db, $_POST['position']);
-  $amount = mysqli_real_escape_string($db, $_POST['amount']);
-  $frozendate = mysqli_real_escape_string($db, $_POST['frozendate']);
-  $availability = mysqli_real_escape_string($db, $_POST['availability']);
-  $comment = mysqli_real_escape_string($db, $_POST['comment']);
-
-  // entry validation: ensure that the form is correctly filled ...
-  // by adding (array_push()) corresponding error unto $errors array
-  if (empty($samplename)) { array_push($errors, "Sample name is required"); }
-  if (empty($celltype)) { array_push($errors, "Cell type is required"); }
-  // if (empty($idfreezer)) { array_push($errors, "Freezer is required"); }
-  if (empty($position)) { array_push($errors, "Position is required"); }
-  // if (empty($amount)) { array_push($errors, "Amount is required"); }
-  if (empty($frozendate)) { array_push($errors, "Frozen date is required"); }
+   // entry validation: ensure that the form is correctly filled ...
+   // by adding (array_push()) corresponding error unto $errors array
+   if (empty($samplename)) { array_push($errors, "Sample name is required"); }
+   if (empty($celltype)) { array_push($errors, "Cell type is required"); }
+   if (empty($position)) { array_push($errors, "Position is required"); }
+   // if (empty($amount)) { array_push($errors, "Amount is required"); }
+   if (empty($frozendate)) { array_push($errors, "Frozen date is required"); }
 
 
-  // Finally, add the new entry in the sample table
-  if (count($errors) == 0) {
+   // Finally, add the new entry in the sample table
+   if (count($errors) == 0) {
+   	$query = "INSERT INTO Sample (Name, Cell_type, idStorage,  Position, Frozendate, Amount, Availability, Comment, idUser)
+   			  VALUES('$samplename', '$celltype', '$idStorage', '$position', '$frozendate', '$amount', '$availability', '$comment','".$_SESSION["userdata"]["idUser"]."')";
+     # print("<br><br><br>");
+     # print($query);
+     mysqli_query($db, $query) or die(mysqli_error($db));
 
 
-  	$query = "INSERT INTO Sample (Name, Cell_type, idStorage, Rack, Position, Frozendate, Amount, Availability, Comment, idUser)
-  			  VALUES('$samplename', '$celltype', '$idStorage', '$rack', '$position', '$frozendate', '$amount', '$availability', '$comment','".$_SESSION["userdata"]["idUser"]."')";
-    # print("<br><br><br>");
-    # print($query);
-    mysqli_query($db, $query) or die(mysqli_error($db));
+   }
+ }
+ # END: CREATE A NEW ENTRY #----------------------------------------------------#
 
-  }
-}
-# END: CREATE A NEW ENTRY #----------------------------------------------------#
 
 ?>
 <!DOCTYPE html>

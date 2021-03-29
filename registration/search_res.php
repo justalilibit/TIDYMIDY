@@ -168,8 +168,28 @@ $table .= "</ol>";
 				<?php echo $table ?>
 
 			</div>
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+			<form action="TIDYMIDY/registration/" method="post">
+				<div class="input-group">
+
+					<button type="submit" class="btn btn-success" name"newsearch" id="newsearch" href="search.php">New Search</button>
+					<button type="submit" class="btn btn-success" name"home" id="home" href="index.php">Go to Home</button>
+=======
+		</div>
+		<div class = "container">
+			<form method="post" action="search.php">
+				<div class="input-group">
+					<button class="btn btn-success">New advanced Search</button>
+>>>>>>> 9dd28cf14db83806c34269e29c94c1fffade9aa9
+				</div>
+			</form>
+      <form method="post" action="index.php">
+=======
 
 			<form action="/search.php" method="post">
+>>>>>>> a2c38a27619cbb48a04cf5b4488d152ea16fd4ac
 				<div class="input-group">
 
 					<button type="submit" class="btn btn-success" name"newsearch" id="newsearch" href="search.php">New Search</button>
