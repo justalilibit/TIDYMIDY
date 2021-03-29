@@ -28,10 +28,8 @@
         row.innerHTML = `
             <td>${title.value}</td>
             <td>${description.value}</td>
-
             <td>${amount.value}</td>
             <td>${owner.value}</td>
-
             <td class="text-center">
                 <input type="checkbox">
             </td>
