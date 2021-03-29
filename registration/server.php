@@ -5,18 +5,17 @@ session_start();
 $username = "";
 $email    = "";
 $table ="";       //result table for search
-
-$keyword = $searchword ="";  //for simple search on index page
+$keyword = $searchword = "";  //for simple search on index page
 $errors = array();
-$samplename = $celltype = $idfreezer = $rack = $position = $amount = $frozendate = $availability = $comment = $Location = $Contact_email = $Full_name = $Contact_phone = $Position = $Main_task = $Find_me = $Institute = '';
+
+$idSample = $samplename = $celltype = $position = $amount = $frozendate = $availability = $comment = $idOwner = $Location = $Contact_email = $Full_name = $Contact_phone = $Position = $Main_task = $Find_me = $Institute = '';
+$idStorage = $storagename = $location = "";
 $errors_registration = array('username' => '', 'email' => '', 'password_1' => '', 'password_2' => '', 'fullname' => '', 'cemail' => '', 'cphone' => '');
 // connect to the database
 # $db = mysqli_connect('localhost', 'albert', '/Puiyuaru1616', 'mydb');   # albert pw
 $db = mysqli_connect('localhost', 'tidytubes', 'Welcome123%', 'mydb');    # jo & lili pw
 
 
-$idSample = $samplename = $celltype = $idfreezer = $rack = $position = $amount = $frozendate = $availability = $idOwner = $comment = '';
-$idStorage = $storagename = $location = "";
 
 
 // NEW SEARCH
@@ -71,8 +70,6 @@ $idStorage = $storagename = $location = "";
     //}
     //echo "</table>";
   //}
-
-
 
 
 
