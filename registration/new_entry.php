@@ -214,18 +214,21 @@ if (isset($_POST['reg_entry'])) {
 
                                 <div class="input-group">
                                     <br>
-
-                                   <label for="Storage">Select Storage / Freezer</label>
-                                   <?php
-                                       $sql = "Select * from Storage";
-                                       $result = mysqli_query($db, $sql);
-                                       echo "<select name='unitid'>";
-                                       echo "<option value='empty'></option>";
-                                       while ($row = mysqli_fetch_array($result)) {
-                                            echo "<option value='" .$row['idStorage']."'> ".$row['Storagename']. "</option>"; #   We could add this here to print not just Storagename but also location: $row['Location'] .
-                                       }
-                                       echo "</select>";
-                                           ?>
+                                    <!-- DISPLAY CONNECTED STORAGES -->
+                                    <div class="input-group">
+                                      <label for="idStorage">Storage:</label>
+                                      <select name='idStorage'>
+                                        <option>Select Storage</option>
+                                        <?php
+                                        foreach($ls_idStorages as $idStorage) {
+                                          $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";
+                                          $res_storage =mysqli_query($db, $storage_sql) or die(mysqli_error($db));
+                                            while ($storageEntry = $res_storage->fetch_assoc()){
+                                              ?><option value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></option><?php
+                                            }
+                                        }?>
+                                      </select>
+                                    </div>
                                </div>
 
                                 <div class="px-sm-2 col-sm-7 d-sm-flex align-items-center mt-2 mt-sm-0">
@@ -239,6 +242,7 @@ if (isset($_POST['reg_entry'])) {
                                 </div>
                             </div>
                             <br>
+
                             <div class="input-group">
                             <button type="submit" class="btn btn-success " name="reg_entry">Add entry
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-plus" viewBox="0 0 16 16">
@@ -248,7 +252,7 @@ if (isset($_POST['reg_entry'])) {
                             </svg></button>
                             <br>
                             <br>
-                            <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal">Add Storage
+                            <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal">Add EXISTING Storage
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16">
                               <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
                             </svg></button>
@@ -260,7 +264,7 @@ if (isset($_POST['reg_entry'])) {
 					              <div class="modal-content">
 					                <div class="modal-header">
 					                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-					                  <h5 class="modal-title">Add storage</h5>
+					                  <h5 class="modal-title">Add existing storage</h5>
 					                </div>
 					                <div class="modal-body">
 					                  <input type="text" name="Location" value="<?php echo $Location; ?>">
@@ -271,7 +275,28 @@ if (isset($_POST['reg_entry'])) {
 					          </div>
                           </div>
 
-					                  <h5 class="modal-title">Add new Storage</h5>
+                          <br>
+                      <!-- CREATE NEW STORAGE ENTRY -->
+                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Create NEW storage <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
+                                        <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                                      </svg></button>
+                                <div id="myModal" class="modal fade" role="dialog">
+                                  <div class="modal-dialog">
+                                      <!-- Modal content-->
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                          <h5 class="modal-title">Create new storage
+                                        </div>
+                                        <div class="modal-body">
+                                  <label>Storage name: </label>
+                                  <input type="text" name="Storagename" value="<?php echo $storagename; ?>">
+                                  <label>Storage location: </label>
+                                  <input type="text" name="Location" value="<?php echo $location; ?>">
+                                          <button type="submit" class="btn btn-success" name="reg_storage">Create new storage</button>
+
+
+					                  <h5 class="modal-title">Add new Storage </h5>
 					                </div>
 					                <div class="modal-body">
 					                  <input type="text" name="Storagename" value="<?php echo $storagename; ?>">
@@ -289,6 +314,9 @@ if (isset($_POST['reg_entry'])) {
 
   		</form>
   	</div>
+
+<!-- EXPLAINING THE BUTTONS  -->
+
 		<div class="container">
 			<h3>How it works:</h3>
 				<p>Use this form to add the tubes you froze. You can choose, how others see your entries in the search field. <br>
@@ -300,11 +328,20 @@ if (isset($_POST['reg_entry'])) {
                   <path fill-rule="evenodd" d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
                   <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
                   <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
-                </svg></button> : adds a new tube to an existing freezer
-                <p><button type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal" disabled>Add Storage</button> : Creates a new space to hold tubes or whatever you like</p>
+              </svg></button> : Adds a new tube to an existing freezer</p>
+
+              <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal" disabled>Add EXISTING Storage
+                                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16">
+                <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
+              </svg></button> : Creates a new space to hold tubes or whatever you like</p>
+
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" disabled>Create NEW storage <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
+                    <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                </svg></button> : Creates a new space where you will be able to place new tubes
 
 		</div>
-
+        <br>
+        <br>
         <?php include('footer.html') ?>
 
   </div>
@@ -315,21 +352,6 @@ if (isset($_POST['reg_entry'])) {
 
 # LILILS BUTTONS AND OPTION STORAGE SELECT THINGY
 
-              <!-- DISPLAY CONNECTED STORAGES -->
-              <div class="input-group">
-                <label for="idStorage">Storage:</label>
-                <select name='idStorage'>
-                  <option>Select Storage</option>
-                  <?php
-                  foreach($ls_idStorages as $idStorage) {
-                    $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";
-                    $res_storage =mysqli_query($db, $storage_sql) or die(mysqli_error($db));
-                      while ($storageEntry = $res_storage->fetch_assoc()){
-                        ?><option value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></option><?php
-                      }
-                  }?>
-                </select>
-              </div>
 
 
               <!-- CREATE NEW STORAGE ENTRY -->

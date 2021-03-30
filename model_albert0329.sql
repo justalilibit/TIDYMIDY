@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`User` (
   `Contact_email` VARCHAR(45) NULL,
   `Institute` VARCHAR(45) NULL,
   `Find_me` VARCHAR(246) NULL,
-  `Profile_image` VARCHAR(45) NULL,
+  `Profile_image` VARCHAR(1000) NULL,
   `idUser` INT AUTO_INCREMENT NOT NULL,
   PRIMARY KEY (`idUser`))
 ENGINE = InnoDB;
