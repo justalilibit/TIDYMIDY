@@ -9,7 +9,7 @@ print("<br><br><br><br>");
 // [Contact_phone] => 123456789023456 [Contact_email] => no@no.de [Institute] => asdasd
 // [Find_me] => asdasd [Profile_image] => [idUser] => 1 )
 
-# GET STORAGEIDs CONNECTED TO CURRENT USER ------------------------------------#
+# LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
 $ls_idStorages = array(); // array holding the storageIDs of our current user
 $query_storageids = "SELECT * FROM User_has_Storage
                       WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
@@ -17,21 +17,20 @@ $query_storageids = "SELECT * FROM User_has_Storage
 $resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
 
 while ($foundID = $resStorIDs->fetch_assoc()) {
-  $idnumber = $foundID['Storage_idStorage'];
-  array_push($ls_idStorages, $idnumber);
-  // print("NUMBER: ");
-  // print($idnumber);
+  $idStorage = $foundID['Storage_idStorage'];
+  array_push($ls_idStorages, $idStorage);
+  # print("Your User is connected to Freezers with ID: "); print($idStorage);
 }
 
 # CREATE A NEW STORAGE ENTRY --------------------------------------------------#
 if (isset($_POST['reg_storage'])) {
 
-  $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
-  if (empty($storagename)) { array_push($errors, "ID storage is required"); }
+  $create_storagename = mysqli_real_escape_string($db, $_POST['createStoragename']);
+  if (empty($create_storagename)) { array_push($errors, "Cannot create new storage. Name is required"); }
 
   if (count($errors) == 0) {
     $queryStoExis = "SELECT * FROM Storage
-                      WHERE Storagename = '$storagename'"; // Check see if Storage already exists
+                      WHERE Storagename = '$create_storagename'"; // Check see if Storage already exists
     $resStorExis = mysqli_query($db, $queryStoExis) or die(mysqli_error($db));
 
     print_r($queryStoExis);
@@ -44,8 +43,8 @@ if (isset($_POST['reg_storage'])) {
     } else { // storagename does not exist yet. Create entry and connect with User
     // CREATE NEW STORAGE
     print("CREATE A NEW STORAGE");
-    $location = mysqli_real_escape_string($db, $_POST['Location']);
-    print($storagename); print($location);
+    $location = mysqli_real_escape_string($db, $_POST['createLocation']);
+    print($create_storagename); print($create_location);
   #  $query_newstorage = "INSERT INTO Storage ()";
     }
     // $queryConnectU_S = "INSERT INTO User_has_Storage (User_idUser, Storage_idStorage)
@@ -54,18 +53,20 @@ if (isset($_POST['reg_storage'])) {
 
   }
 }
+# END: NEW STORAGE ENTRY ------------------------------------------------------#
 
 # ADD AN EXISTING STORAGE ENTRY -----------------------------------------------#
 if (isset($_POST['add_storage'])) {
   print("ADDED STORAGE PRESSED<br>");
-  $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
-  if (empty($storagename)) {
-    array_push($errors, "ID storage is required"); }
+  $add_storagename = mysqli_real_escape_string($db, $_POST['addStoragename']);
+
+  if (empty($add_storagename)) {
+    array_push($errors, "Unable to add existing Storage. Name is required");}
 
   if (count($errors) == 0) {
     // Query to see if Storage already exists
     $queryStoExis = "SELECT * FROM Storage
-                      WHERE Storagename = '$storagename'";
+                      WHERE Storagename = '$add_storagename'";
     $resStorExis = mysqli_query($db,$queryStoExis) or die(mysqli_error($db));
 
     if(!empty($resStorExis)); // if Storage already exists link its id to Userid
@@ -74,6 +75,16 @@ if (isset($_POST['add_storage'])) {
    array_push($errors, "This Storage is not yet registered in the System. Make a new entry using 'Create New Storage'");;
  }
 }
+# END ADD AN EXISTING STORAGE ENTRY -------------------------------------------#
+
+// # FUNCTION to check if Storagename already exists -----------------------------#
+// function storageexists($db, $storagename) {
+//   // function to see if Storagename already exists. returns result object
+//   $query = "SELECT * FROM Storage
+//                     WHERE Storagename = '$storagename'";
+//   $results = mysqli_query($db, $query) or die(mysqli_error($db));
+//   return $results;
+// }
 
 # FUNCTION connecting current User to Storage that fits the prerun query ------#
  function connectUserStorage($db, $res_foundStor) {
@@ -86,6 +97,7 @@ if (isset($_POST['add_storage'])) {
              VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idStorage')";
    mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
  }
+
 
  # CREATE A NEW ENTRY #--------------------------------------------------------#
  if (isset($_POST['reg_entry'])) {
@@ -265,7 +277,7 @@ if (isset($_POST['add_storage'])) {
           					                  <h5 class="modal-title">Add existing storage</h5>
           					                </div>
           					                <div class="modal-body">
-          					                  <input type="text" name="Storagename" value="<?php echo $storagename; ?>">
+          					                  <input type="text" name="addStoragename" value="<?php echo $add_storagename; ?>">
           					                  <button type="submit" class="btn" name="add_storage">Connect to existing Storage</button>
           					                </div>
           					              </div>
@@ -287,8 +299,8 @@ if (isset($_POST['add_storage'])) {
            					                  <h5 class="modal-title">Create Entry for a new Storage</h5>
            					                </div>
            					                <div class="modal-body">
-                                      <input type="text" name="Storagename" value="<?php echo $storagename; ?>">
-                                      <input type="text" name="Location" value="<?php echo $location; ?>">
+                                      <input type="text" name="createStoragename" value="<?php echo $create_storagename; ?>">
+                                      <input type="text" name="createLocation" value="<?php echo $create_location; ?>">
            					                  <button type="submit" class="btn" name="reg_storage">Create new Storage</button>
            					                </div>
            					              </div>
