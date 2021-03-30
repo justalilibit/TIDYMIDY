@@ -1,6 +1,6 @@
 <?php
 include('server.php');
-
+print("<br><br>");
 // COMMENT LILI: 	there are 2 ways to end up here:
 // 											a. over simple keyword search from Index
 //											b. over Advanced Search
@@ -18,32 +18,23 @@ if (isset($_POST['simple_search'])) {
 						'";
 
 
-}
-// ADVANCED SEARCH -------------------------------------------------------------
+} // ADVANCED SEARCH -------------------------------------------------------------
 elseif (isset($_POST['reg_search'])) {
 	//receive all input variables from the serach form
 	$samplename = mysqli_real_escape_string($db, $_POST['samplename']);
 	$celltype = mysqli_real_escape_string($db, $_POST['celltype']);
 	$idStorage = mysqli_real_escape_string($db, $_POST['idStorage']);
-	$rack = mysqli_real_escape_string($db, $_POST['rack']);
 	$position = mysqli_real_escape_string($db, $_POST['position']);
-	$amount = mysqli_real_escape_string($db, $_POST['amount']);
 	$frozendate = mysqli_real_escape_string($db, $_POST['frozendate']);
-	$availability = mysqli_real_escape_string($db, $_POST['availability']);
-	$comment = mysqli_real_escape_string($db, $_POST['comment']);
 
 	// create the search query using the fields from above (empty if not provided by user)
 	$query = "SELECT *
 						FROM Sample
 						WHERE ( IF(LENGTH('$samplename') > 0, Name LIKE '%$samplename%' , 0)
-				    OR IF(LENGTH('$celltype') > 0, Cell_type LIKE '%$celltype%', 0)
-						OR IF(LENGTH('$idStorage') > 0, idStorage = '$idStorage' , 0)
+				    OR IF(LENGTH('$celltype') 	> 0, Cell_type LIKE '%$celltype%', 0)
+						OR IF(LENGTH('$idStorage') 	> 0, idStorage = '$idStorage' , 0)
 				    OR IF(LENGTH('$frozendate') > 0, Frozendate LIKE '%$frozendate%' , 0)
-				    OR IF(LENGTH('$availability') > 0, Availability LIKE '%$availability%', 0)
-						OR IF(LENGTH('$position') > 0, Position LIKE '%$position%' , 0)
-						OR IF(LENGTH('$rack') > 0, Rack LIKE '%$rack%' , 0)
-						OR IF(LENGTH('$amount') > 0, Amount LIKE '%$amount%' , 0)
-						OR IF(LENGTH('$comment') > 0, Comment LIKE '%$comment%' , 0)
+						OR IF(LENGTH('$position') 	> 0, Position LIKE '%$position%' , 0)
 					)";
 
 
@@ -67,11 +58,11 @@ if ($results->num_rows > 0) {
 	echo "<table border='1' cellspacing='5' cellpadding='4' id='resultTable' style='width:80%'>
 					<thead>
 						<tr>
-							<th echo onclick='sortTable(0)'>Name</th>
+
+							<th onclick='sortTable(0)'>Name</th>
 							<th onclick='sortTable(1)'>Cell Type</th>
 							<th onclick='sortTable(2)'>Freezer name</th>
 							<th onclick='sortTable(3)'>Freezer Location</th>
-							<th onclick='sortTable(4)'>Rack</th>
 							<th onclick='sortTable(10)'>Position</th>
 							<th onclick='sortTable(5)'>Date</th>
 							<th onclick='sortTable(6)'>Amount</th>
@@ -82,7 +73,6 @@ if ($results->num_rows > 0) {
 						</tr>
 					</thead>
 					<tbody>";
-
 
 	while($row = $results->fetch_assoc()) {
 
@@ -111,19 +101,16 @@ if ($results->num_rows > 0) {
 		$table .= "<td>" . $row["Cell_type"] . "</td>";
 		$table .= "<td>" . $storagename . "</td>";
 		$table .= "<td>" . $location . "</td>";
-		$table .= "<td>" . $row["Rack"] . "</td>";
 		$table .= "<td>" . $row["Position"] .	"</td>";
 		$table .= "<td>" . $row["Frozendate"] . "</td>";
 		$table .= "<td>" . $row["Amount"] . "</td>";
 		$table .= "<td>" . $row["Availability"] . "</td>";
-
+		// <a style="color:blue" href="profile_others.php"> $idOwner </a>
 		$table .= "<td>" . $idOwner . "</td>";
 		$table .= "<td>" . $row["Comment"] . 	"</td>";
 		$table .=	"<td> <form action='delete.php' method='post'>
-											<div>
-									    <button name = delete_entry type='submit'>Delete</button>
-									  </div>
-										<input type='hidden' name='idSample' value=".$row['idSample']." />
+										<button name=delete_entry type submit>Delete</button>
+										<input type='hidden' name='idSample' value="; echo $row["idSample"]; "/>
 		            </form>
 		          </td>";
 		$table .= "</tr>";
@@ -132,6 +119,15 @@ if ($results->num_rows > 0) {
 
 }
 $table .= "</ol>";
+
+// // DELETE AN ENTRY
+// if (isset($_POST['delete_entry'])) {
+// 	$queryDelete = "DELETE FROM Sample WHERE idSample = $idSample"
+// 	$
+// }
+//
+// 	//Define the query
+// 	$query = "DELETE FROM Sample WHERE idSample={$_POST['idSample']}";
 
 
 ?>
@@ -160,23 +156,34 @@ $table .= "</ol>";
 			<!-- RESULT TABLE -->
 			<div>
 				<?php echo $table ?>
-
 			</div>
-		</div>
-		<div class = "container">
-			<form method="post" action="search.php">
+			<br>
+			<br>
+			<!-- BUTTONS -->
+			<form action="/search.php" method="post">
 				<div class="input-group">
-					<button class="btn btn-success">New advanced Search</button>
-				</div>
+					<div class="container">
+				  		<div class="row">
+							<div class="col-12 col-md-2">
+								<button type="submit" class="btn btn-success" name"newsearch" id="newsearch" href="search.php">New Search <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+							   	   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+							   	 </svg></button>
+							</div>
+							<div class="col-12 col-md-1">
+								<button type="submit" class="btn btn-info" name"home" id="home" formacion="/index.php">Go Home <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
+						          <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
+						        </svg></button>
+							</div>
+						</div>
+					</div>
+
 			</form>
-      <form method="post" action="index.php">
-				<div class="input-group">
-					<button class="btn btn-success">Back to Home</button>
-				</div>
-			</form>
-		</div>
+	</div>
 
 
+<br>
+<br>
+<br>
 	<?php include('footer.html') ?>
 
 </body>
