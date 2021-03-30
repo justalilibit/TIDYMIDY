@@ -4,9 +4,9 @@ include('server.php');
 // DELETE AN ENTRY
 print("<br><br><br><br>");
 
-if(isset($_POST['delete_entry'])){
-  if  (isset($_POST['idSample'])) {
-    mysqli_query($db, "DELETE FROM Sample WHERE idSample='".$_POST['idSample']."'");
+if(isset($_POST['delete_request'])){
+  if  (isset($_POST['idRequest'])) {
+    mysqli_query($db, "DELETE FROM Request WHERE idRequest='".$_POST['idRequest']."'");
 }}
 
 ?>
@@ -21,14 +21,14 @@ if(isset($_POST['delete_entry'])){
   <div class="hero">
     <div class="jumbotron text-center" style="margin-bottom: 0px;">
         <h1>Deletion successful</h1>
-        <p>Your entry has been removed from the Storage!</p>
+        <p>Your request has been removed from the Request table!</p>
     </div>
   </div>
 
   <div class="container">
-			<h2>Search Results</h2>
+			<h2>Request Results</h2>
 			<div class="content">
-				<h4>The following Entry has been successfully removed:</h4>
+				<h4>The following Request has been successfully removed:</h4>
 			</div>
     </div>
 
@@ -36,9 +36,9 @@ if(isset($_POST['delete_entry'])){
 
 			</div>
 
-			<form method="post" action="search.php">
+			<form method="post" action="request.php">
 				<div class="input-group">
-					<button class="btn btn-success">New advanced Search</button>
+					<button class="btn btn-success">New Request Search</button>
 				</div>
 			</form>
       <form method="post" action="index.php">
