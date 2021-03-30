@@ -54,6 +54,7 @@ if (isset($_POST['reg_storage'])) {
 # END: NEW STORAGE ENTRY ------------------------------------------------------#
 
 
+
 # ADD AN EXISTING STORAGE ENTRY -----------------------------------------------#
 if (isset($_POST['add_storage'])) {
   $add_storagename = mysqli_real_escape_string($db, $_POST['addStoragename']);
@@ -259,7 +260,6 @@ function alreadyconnected($db, $idStorage) {
                                               ?><option value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></option><?php
                                             }
                                         }?>
-                                        <option selected >nothing selected</option>;
                                       </select>
                                     </div>
                                </div>
