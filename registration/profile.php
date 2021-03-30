@@ -10,6 +10,8 @@ while($row = $results->fetch_assoc()) {
     $Institute = $row["Institute"];
     $Find_me = $row["Find_me"];
 }
+$_SESSION['fullname'] = $Full_name;
+
 
 $idOwner='albertotitissss';
 
@@ -126,9 +128,13 @@ $idOwner='albertotitissss';
 </div>
 
 
+<td> <form name='delete_entry' action='delete.php' method='post'>
+                                <input type='submit' name='delete_entry' value='Delete' />
+                                <input type='hidden' name='idSample' value="; echo $row["idSample"]; "/>
+            </form>
 
-<form class="" action="" method="GET">
-    <a style="color:blue" name= href="profile_others.php"> <?php echo $idOwner; ?></a>
+<form class="other_user" action="profile_others.php" method="post">
+    <input type="text" name="" value="">   <a style="color:blue" name="" href="profile_others.php"> <?php echo $idOwner; ?></a>
 </form>
 
 

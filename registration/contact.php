@@ -1,3 +1,5 @@
+<?php include('server.php'); ?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -15,17 +17,27 @@
                       </svg></h1>	<p>If you detect any bug or you have any demand that we could fulfill, please contact us!</p>
                   </div>
             <div class="container">
-                <form method="post" action="request.php">
-                    <h2>Report any problem or bug. We highly appreciate your feedback!</h2>
+                <form method="" action="">
+                    <h2 class="text-center">Report any problem or bug. We highly appreciate your feedback!</h2>
                     <div class="row">
                       <div class="col-sm-3 d-sm-flex align-items-center">
                         <label class="m-sm-0">Your name</label>
                         <input
                           type="text"
                           class="form-control ml-sm-2"
-                          placeholder="E.coli-LB-AMX50"
+                          placeholder= "<?php echo $_SESSION['fullname'] ?>"
                         >
                         </div>
+
+                  <div class="col-sm-3 d-sm-flex align-items-center">
+                    <label class="m-sm-0">Your email</label>
+                    <input
+                      type="text"
+                      class="form-control ml-sm-2"
+                      placeholder= "<?php echo $_SESSION['email'] ?>"
+                    >
+                    </div>
+
             <div class="row">
             <div class="col-sm-5">
               <p>Report any problem or bug. We appreciate your feedback!</p>
@@ -50,6 +62,7 @@
             </div>
           </div>
         </div>
+
             <!-- Image of location -->
       <div class="jumbotron text-center" style="margin-bottom: 0px;">
           <h2>Find us in our second home</h2>

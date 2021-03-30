@@ -31,7 +31,7 @@ if (isset($_POST['reg_info'])) {
   	mysqli_query($db, $query) or die(mysqli_error($db));
     $query = "SELECT * FROM User WHERE Username='$username' ";
     $results = mysqli_query($db, $query) or die(mysqli_error($db));
-  	header('location: index.php');
+  	header('location: login.php');
   }
 }
 
