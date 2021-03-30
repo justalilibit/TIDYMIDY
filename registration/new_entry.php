@@ -3,7 +3,6 @@
 include('server.php');
 # print("<br><br><br><br>");
 
-
 # LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
 $ls_idStorages = array(); // array holding the storageIDs of our current user
 $query_storageids = "SELECT * FROM User_has_Storage
@@ -14,14 +13,12 @@ $resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
 while ($foundID = $resStorIDs->fetch_assoc()) {
   $idStorage = $foundID['Storage_idStorage'];
   array_push($ls_idStorages, $idStorage);
-
 #  print("Your User is connected to Freezers with ID: "); print($idStorage);
 }
 
 # CREATE A NEW STORAGE ENTRY --------------------------------------------------#
 if (isset($_POST['reg_storage'])) {
   $create_storagename = mysqli_real_escape_string($db, $_POST['createStoragename']);
-
 
   if (empty($create_storagename)) {
     array_push($errors, "Unable to add existing Storage. Name is required");}
@@ -53,7 +50,6 @@ if (isset($_POST['reg_storage'])) {
       }
     }
   }
-
 } # end reg_storage
 # END: NEW STORAGE ENTRY ------------------------------------------------------#
 
@@ -66,7 +62,6 @@ if (isset($_POST['add_storage'])) {
     array_push($errors, "Unable to add existing Storage. Name is required");}
 
   if (count($errors) == 0) {
-
       // MAKE SURE THAT ENTRY EXISTS
       $resStorExis = storageexists($db, $add_storagename);
 
@@ -100,16 +95,6 @@ function alreadyconnected($db, $idStorage) {
   $result = mysqli_query($db, $query) or die(mysqli_error($db));
   return $result;
 }
-# END ADD AN EXISTING STORAGE ENTRY -------------------------------------------#
-
-// # FUNCTION to check if Storagename already exists -----------------------------#
-// function storageexists($db, $storagename) {
-//   // function to see if Storagename already exists. returns result object
-//   $query = "SELECT * FROM Storage
-//                     WHERE Storagename = '$storagename'";
-//   $results = mysqli_query($db, $query) or die(mysqli_error($db));
-//   return $results;
-// }
 
 # FUNCTION connecting current User to Storage that fits the prerun query ------#
  function connectUserStorage($db, $res_foundStor) {
@@ -117,7 +102,6 @@ function alreadyconnected($db, $idStorage) {
    while($storage = $res_foundStor->fetch_assoc()){
      $idStorage = $storage["idStorage"];
    }
-
    $alreadyexists = alreadyconnected($db, $idStorage);
 
    if ($alreadyexists) {
@@ -148,9 +132,9 @@ function alreadyconnected($db, $idStorage) {
    if (empty($position)) { array_push($errors, "Position is required"); }
    if (empty($amount)) { array_push($errors, "Amount is required"); }
    if (empty($frozendate)) { array_push($errors, "Frozen date is required"); }
-
    if (empty($idStorage)) { array_push($errors, "Please select a valid Storage"); }
    #if (!is_int($idStorage)) { array_push($errors, "Please select a valid Storage"); print($idStorage); }
+
 
    // Finally, add the new entry in the sample table
    if (count($errors) == 0) {
@@ -170,7 +154,6 @@ function alreadyconnected($db, $idStorage) {
 <!DOCTYPE html>
 <html>
 <head>
-
 
       <script language="JavaScript" type="text/javascript">
 
@@ -231,7 +214,6 @@ function alreadyconnected($db, $idStorage) {
                                     <div class="col-sm-3 d-sm-flex align-items-center">
                                         <label class="m-sm-0">For who are these tubes?</label>
                                         <select name="availability" class="custom-select"
-
                                             <option selected>Privat</option>
                                             <option value="1">Privat</option>
                                             <option value="2">Ask me first</option>
@@ -265,12 +247,10 @@ function alreadyconnected($db, $idStorage) {
 
                                 <div class="input-group">
                                     <br>
-
                                     <!-- DISPLAY CONNECTED STORAGES -->
                                     <div class="input-group">
                                       <label for="idStorage">Storage:</label>
                                       <select name='idStorage'>
-                                        <option selected>Select Storage</option>
                                         <?php
                                         foreach($ls_idStorages as $idStorage) {
                                           $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";
@@ -295,10 +275,10 @@ function alreadyconnected($db, $idStorage) {
                                     ></textarea>
                                 </div>
 
-
                             </div>
                             <br>
 
+<!--- THIS IS ADDING THE ENTRY --------------------------------------------------------------------------------------------------------------------->
                             <div class="input-group">
                             <button type="submit" onclick="return checkDelete()" class="btn btn-success " name="reg_entry">Add entry
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-plus" viewBox="0 0 16 16">
@@ -308,13 +288,14 @@ function alreadyconnected($db, $idStorage) {
                             </svg></button>
                             <br>
                             <br>
+<!--- ADD_BUTTON: THIS IS ADDING AN EXISTING ALREADY THERE STORAGE --------------------------------------------------------------------------------------------------------------------->
+
                             <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal">Add EXISTING Storage
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16">
                               <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
                             </svg></button>
 					      <div id="myModal" class="modal fade" role="dialog">
 					            <div class="modal-dialog">
-
 
 					              <!-- Modal content-->
 					              <div class="modal-content">
@@ -323,7 +304,7 @@ function alreadyconnected($db, $idStorage) {
 					                  <h5 class="modal-title">Add existing storage</h5>
 					                </div>
 					                <div class="modal-body">
-					                  <input type="text" name="addStorage" value="<?php echo $add_storage; ?>">
+					                  <input type="text" placeholder='Name of existing Storage' name="addStorage" value="<?php echo $add_storagename; ?>">
 					                  <button type="submit" class="btn" name="add_storage">Add EXISTING storage</button>
 					                </div>
 					              </div>
@@ -332,11 +313,12 @@ function alreadyconnected($db, $idStorage) {
                           </div>
 
                           <br>
-                      <!-- BUTTON: CREATE NEW STORAGE ENTRY -->
-                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Create NEW storage <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
+<!--- CREATE_BUTTON: THIS IS CREATING A NEW STORAGE ---------------------------------------------------------------------------------------------------------------------------->
+
+                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal_create">Create NEW storage <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
                                         <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
                                       </svg></button>
-                                <div id="myModal" class="modal fade" role="dialog">
+                                <div id="myModal_create" class="modal fade" role="dialog">
                                   <div class="modal-dialog">
                                       <!-- Modal content-->
                                       <div class="modal-content">
@@ -345,21 +327,11 @@ function alreadyconnected($db, $idStorage) {
                                           <h5 class="modal-title">Create new storage
                                         </div>
                                         <div class="modal-body">
-                                  <label>Storage name: </label>
-                                  <input type="text" name="createStoragename" value="<?php echo $create_storagename; ?>">
-                                  <label>Storage location: </label>
-                                  <input type="text" name="createLocation" value="<?php echo $create_location; ?>">
+                                          <label>Storage name: </label>
+                                          <input type="text" placeholder='New Storage Name' name="createStoragename" value="<?php echo $create_storagename; ?>">
+                                          <label>Storage location: </label>
+                                          <input type="text" placeholder='New Storage Location' name="createLocation" value="<?php echo $create_location; ?>">
                                           <button type="submit" class="btn btn-success" name="reg_storage">Create new storage</button>
-
-
-					                  <h5 class="modal-title">Add new Storage </h5>
-					                </div>
-					                <div class="modal-body">
-					                  <input type="text" name="Storagename" value="<?php echo $storagename; ?>">
-					                  <button type="submit" class="btn btn-success" name="reg_storage">Add</button>
-
-					                </div>
-
 
 					              </div>
 					            </div>
@@ -382,7 +354,6 @@ function alreadyconnected($db, $idStorage) {
                   <path fill-rule="evenodd" d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
                   <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
                   <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
-
               </svg></button> : Adds a new tube to an existing freezer</p>
 
               <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal" disabled>Add EXISTING Storage
