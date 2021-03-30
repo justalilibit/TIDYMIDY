@@ -1,6 +1,6 @@
 <?php
 include('server.php');
-
+print("<br><br>");
 // COMMENT LILI: 	there are 2 ways to end up here:
 // 											a. over simple keyword search from Index
 //											b. over Advanced Search
@@ -24,25 +24,17 @@ elseif (isset($_POST['reg_search'])) {
 	$samplename = mysqli_real_escape_string($db, $_POST['samplename']);
 	$celltype = mysqli_real_escape_string($db, $_POST['celltype']);
 	$idStorage = mysqli_real_escape_string($db, $_POST['idStorage']);
-	$rack = mysqli_real_escape_string($db, $_POST['rack']);
 	$position = mysqli_real_escape_string($db, $_POST['position']);
-	$amount = mysqli_real_escape_string($db, $_POST['amount']);
 	$frozendate = mysqli_real_escape_string($db, $_POST['frozendate']);
-	$availability = mysqli_real_escape_string($db, $_POST['availability']);
-	$comment = mysqli_real_escape_string($db, $_POST['comment']);
 
 	// create the search query using the fields from above (empty if not provided by user)
 	$query = "SELECT *
 						FROM Sample
 						WHERE ( IF(LENGTH('$samplename') > 0, Name LIKE '%$samplename%' , 0)
-				    OR IF(LENGTH('$celltype') > 0, Cell_type LIKE '%$celltype%', 0)
-						OR IF(LENGTH('$idStorage') > 0, idStorage = '$idStorage' , 0)
+				    OR IF(LENGTH('$celltype') 	> 0, Cell_type LIKE '%$celltype%', 0)
+						OR IF(LENGTH('$idStorage') 	> 0, idStorage = '$idStorage' , 0)
 				    OR IF(LENGTH('$frozendate') > 0, Frozendate LIKE '%$frozendate%' , 0)
-				    OR IF(LENGTH('$availability') > 0, Availability LIKE '%$availability%', 0)
-						OR IF(LENGTH('$position') > 0, Position LIKE '%$position%' , 0)
-						OR IF(LENGTH('$rack') > 0, Rack LIKE '%$rack%' , 0)
-						OR IF(LENGTH('$amount') > 0, Amount LIKE '%$amount%' , 0)
-						OR IF(LENGTH('$comment') > 0, Comment LIKE '%$comment%' , 0)
+						OR IF(LENGTH('$position') 	> 0, Position LIKE '%$position%' , 0)
 					)";
 
 
@@ -71,7 +63,6 @@ if ($results->num_rows > 0) {
 							<th onclick='sortTable(1)'>Cell Type</th>
 							<th onclick='sortTable(2)'>Freezer name</th>
 							<th onclick='sortTable(3)'>Freezer Location</th>
-							<th onclick='sortTable(4)'>Rack</th>
 							<th onclick='sortTable(10)'>Position</th>
 							<th onclick='sortTable(5)'>Date</th>
 							<th onclick='sortTable(6)'>Amount</th>
@@ -110,7 +101,6 @@ if ($results->num_rows > 0) {
 		$table .= "<td>" . $row["Cell_type"] . "</td>";
 		$table .= "<td>" . $storagename . "</td>";
 		$table .= "<td>" . $location . "</td>";
-		$table .= "<td>" . $row["Rack"] . "</td>";
 		$table .= "<td>" . $row["Position"] .	"</td>";
 		$table .= "<td>" . $row["Frozendate"] . "</td>";
 		$table .= "<td>" . $row["Amount"] . "</td>";
@@ -118,8 +108,8 @@ if ($results->num_rows > 0) {
 		// <a style="color:blue" href="profile_others.php"> $idOwner </a>
 		$table .= "<td>" . $idOwner . "</td>";
 		$table .= "<td>" . $row["Comment"] . 	"</td>";
-		$table .=	"<td> <form name='delete_entry' action='delete.php' method='post'>
-										<input type='submit' name='delete_entry' value='Delete' />
+		$table .=	"<td> <form action='delete.php' method='post'>
+										<button name=delete_entry type submit>Delete</button>
 										<input type='hidden' name='idSample' value="; echo $row["idSample"]; "/>
 		            </form>
 		          </td>";

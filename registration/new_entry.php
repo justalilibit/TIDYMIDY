@@ -1,6 +1,7 @@
 <?php
 
 include('server.php');
+# print("<br><br><br><br>");
 
 # LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
 $ls_idStorages = array(); // array holding the storageIDs of our current user
@@ -131,7 +132,8 @@ function alreadyconnected($db, $idStorage) {
    if (empty($position)) { array_push($errors, "Position is required"); }
    if (empty($amount)) { array_push($errors, "Amount is required"); }
    if (empty($frozendate)) { array_push($errors, "Frozen date is required"); }
-   if (!is_int($idStorage)) { array_push($errors, "Please select a valid Storage"); }
+   if (empty($idStorage)) { array_push($errors, "Please select a valid Storage"); }
+   #if (!is_int($idStorage)) { array_push($errors, "Please select a valid Storage"); print($idStorage); }
 
 
    // Finally, add the new entry in the sample table
@@ -152,6 +154,13 @@ function alreadyconnected($db, $idStorage) {
 <!DOCTYPE html>
 <html>
 <head>
+
+      <script language="JavaScript" type="text/javascript">
+
+      function checkDelete(){
+          return confirm('Are you sure?');
+      }
+      </script>
 
 </head>
 <body>
@@ -205,8 +214,8 @@ function alreadyconnected($db, $idStorage) {
                                     <div class="col-sm-3 d-sm-flex align-items-center">
                                         <label class="m-sm-0">For who are these tubes?</label>
                                         <select name="availability" class="custom-select"
-                                            <option selected>Private</option>
-                                            <option value="1">Private</option>
+                                            <option selected>Privat</option>
+                                            <option value="1">Privat</option>
                                             <option value="2">Ask me first</option>
                                             <option value="3">Public</option>
                                           </select>
@@ -242,7 +251,7 @@ function alreadyconnected($db, $idStorage) {
                                     <div class="input-group">
                                       <label for="idStorage">Storage:</label>
                                       <select name='idStorage'>
-                                        <option>Select Storage</option>
+                                        <option selected>Select Storage</option>
                                         <?php
                                         foreach($ls_idStorages as $idStorage) {
                                           $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";
@@ -251,6 +260,7 @@ function alreadyconnected($db, $idStorage) {
                                               ?><option value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></option><?php
                                             }
                                         }?>
+                                        <option selected >nothing selected</option>;
                                       </select>
                                     </div>
                                </div>
@@ -270,7 +280,7 @@ function alreadyconnected($db, $idStorage) {
                             <br>
 
                             <div class="input-group">
-                            <button type="submit" class="btn btn-success " name="reg_entry">Add entry
+                            <button type="submit" onclick="return checkDelete()" class="btn btn-success " name="reg_entry">Add entry
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-plus" viewBox="0 0 16 16">
                               <path fill-rule="evenodd" d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
                               <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
@@ -302,7 +312,7 @@ function alreadyconnected($db, $idStorage) {
                           </div>
 
                           <br>
-                      <!-- CREATE NEW STORAGE ENTRY -->
+                      <!-- BUTTON: CREATE NEW STORAGE ENTRY -->
                                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Create NEW storage <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
                                         <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
                                       </svg></button>
