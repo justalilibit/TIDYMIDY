@@ -1,4 +1,5 @@
 <?php include('server.php');
+
 $query = "SELECT * FROM User WHERE Username='".$_SESSION["username"]."' ";
 $results = mysqli_query($db, $query) or die(mystringsqli_error($db));
 while($row = $results->fetch_assoc()) {
@@ -11,7 +12,6 @@ while($row = $results->fetch_assoc()) {
     $Find_me = $row["Find_me"];
 }
 
-$idOwner='albertotitissss';
 
 // if(isset($_POST['submit'])){
 //         $ptofile_pic= $_FILES['file'];
@@ -116,7 +116,7 @@ $idOwner='albertotitissss';
                 <form class="form-inline" method="post" action="search_res.php">
                     <div class="input-group">
                           <div class="input-group-btn">
-                            <button type="submit" class="btn btn-success" name="my_entries">Show all my Tubes</button>
+                            <button type="submit" class="btn btn-success" name="my_entries" disabled>Show all my Tubes</button>
                           </div>
                     </div>
                 </form>
@@ -124,13 +124,6 @@ $idOwner='albertotitissss';
         </div>
     </div>
 </div>
-
-
-
-<form class="" action="" method="GET">
-    <a style="color:blue" name= href="profile_others.php"> <?php echo $idOwner; ?></a>
-</form>
-
 
 <style media="screen">
 
