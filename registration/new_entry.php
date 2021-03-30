@@ -25,6 +25,13 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
 # CREATE A NEW STORAGE ENTRY --------------------------------------------------#
 if (isset($_POST['reg_storage'])) {
 
+  print("CREATE NEW STORAGE PRESSED<br>");
+  $add_storagename = mysqli_real_escape_string($db, $_POST['addStoragename']);
+
+  if (empty($add_storagename)) {
+    array_push($errors, "Unable to add existing Storage. Name is required");}
+
+
   $create_storagename = mysqli_real_escape_string($db, $_POST['createStoragename']);
   if (empty($create_storagename)) { array_push($errors, "Cannot create new storage. Name is required"); }
 
