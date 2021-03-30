@@ -1,5 +1,19 @@
 <?php
 include('server.php');
+
+# LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
+$ls_idStorages = array(); // array holding the storageIDs of our current user
+$query_storageids = "SELECT * FROM User_has_Storage
+                      WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+                        ";
+$resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
+
+while ($foundID = $resStorIDs->fetch_assoc()) {
+  $idStorage = $foundID['Storage_idStorage'];
+  array_push($ls_idStorages, $idStorage);
+#  print("Your User is connected to Freezers with ID: "); print($idStorage);
+}
+
 ?>
 
 <!-- COMMENT LILI: 		This page only contains the search form.
@@ -87,6 +101,25 @@ include('server.php');
 							 value="<?php echo $frozendate;?>"
 							 >
 					 </div>
+
+					 <div class="input-group">
+							 <br>
+							 <!-- DISPLAY CONNECTED STORAGES -->
+							 <div class="input-group">
+								 <label for="idStorage">Storage:</label>
+								 <select name='idStorage'>
+									 <option selected>Select Storage</option>
+									 <?php
+									 foreach($ls_idStorages as $idStorage) {
+										 $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";
+										 $res_storage =mysqli_query($db, $storage_sql) or die(mysqli_error($db));
+											 while ($storageEntry = $res_storage->fetch_assoc()){
+												 ?><option value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></option><?php
+											 }
+									 }?>
+								 </select>
+							 </div>
+					</div>
 
 					<div class="input-group">
  							<br>

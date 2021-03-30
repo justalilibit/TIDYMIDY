@@ -19,6 +19,7 @@ $errors_registration = array('username' => '', 'email' => '', 'password_1' => ''
 
 
 
+
 // NEW SEARCH
 
 //if (isset($_POST['reg_search']))

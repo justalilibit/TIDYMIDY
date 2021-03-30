@@ -2,12 +2,12 @@
 include('server.php');
 
 // DELETE AN ENTRY
-print("<br><br><br><br>");
 
 if(isset($_POST['delete_entry'])){
   if  (isset($_POST['idSample'])) {
     mysqli_query($db, "DELETE FROM Sample WHERE idSample='".$_POST['idSample']."'");
-}}
+  }
+}
 
 ?>
 

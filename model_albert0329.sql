@@ -5,19 +5,19 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema tidytubes
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema tidytubes
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
-USE `mydb` ;
+CREATE SCHEMA IF NOT EXISTS `tidytubes` DEFAULT CHARACTER SET utf8 ;
+USE `tidytubes` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`User`
+-- Table `tidytubes`.`User`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`User` (
+CREATE TABLE IF NOT EXISTS `tidytubes`.`User` (
   `Email` VARCHAR(45) NOT NULL,
   `Password` VARCHAR(45) NOT NULL,
   `Username` VARCHAR(45) NOT NULL,
@@ -35,9 +35,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Sample`
+-- Table `tidytubes`.`Sample`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Sample` (
+CREATE TABLE IF NOT EXISTS `tidytubes`.`Sample` (
   `idSample` INT AUTO_INCREMENT NOT NULL,
   `Name` VARCHAR(45) NULL,
   `Cell_type` VARCHAR(45) NULL,
@@ -51,45 +51,21 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Sample` (
   PRIMARY KEY (`idSample`),
   CONSTRAINT `fk_Sample_User`
     FOREIGN KEY (`idUser`)
-    REFERENCES `mydb`.`User` (`idUser`)
+    REFERENCES `tidytubes`.`User` (`idUser`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Sample_Storage`
     FOREIGN KEY (`idStorage`)
-    REFERENCES `mydb`.`Storage` (`idStorage`)
+    REFERENCES `tidytubes`.`Storage` (`idStorage`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`role`
+-- Table `tidytubes`.`Storage`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`role` (
-  `idrole` INT AUTO_INCREMENT NOT NULL,
-  PRIMARY KEY (`idrole`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`role_has_User`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`role_has_User` (
-  `role_idrole` INT AUTO_INCREMENT NOT NULL,
-  `User_idUser` INT NOT NULL,
-  PRIMARY KEY (`role_idrole`, `User_idUser`),
-  CONSTRAINT `fk_role_has_User_role`
-    FOREIGN KEY (`role_idrole`)
-    REFERENCES `mydb`.`role` (`idrole`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`Storage`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Storage` (
+CREATE TABLE IF NOT EXISTS `tidytubes`.`Storage` (
   `idStorage` INT AUTO_INCREMENT NOT NULL,
   `Storagename` VARCHAR(45) NULL,
   `Location` VARCHAR(45) NULL,
@@ -98,46 +74,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Request`
+-- Table `tidytubes`.`User_has_Storage`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Request` (
-  `idRequests` INT AUTO_INCREMENT NOT NULL,
-  `Name` VARCHAR(45) NULL,
-  `Cell_type` VARCHAR(45) NULL,
-  `Date` VARCHAR(45) NULL,
-  `Availability` VARCHAR(45) NULL,
-  `Comment` VARCHAR(45) NULL,
-  `Position` VARCHAR(45) NULL,
-  PRIMARY KEY (`idRequests`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`User_has_Request`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`User_has_Request` (
-  `User_idUser` INT AUTO_INCREMENT NOT NULL,
-  `Request_idRequests` INT NOT NULL,
-  PRIMARY KEY (`User_idUser`, `Request_idRequests`),
-  INDEX `fk_User_has_Request_Request1_idx` (`Request_idRequests` ASC) VISIBLE,
-  INDEX `fk_User_has_Request_User1_idx` (`User_idUser` ASC) VISIBLE,
-  CONSTRAINT `fk_User_has_Request_User1`
-    FOREIGN KEY (`User_idUser`)
-    REFERENCES `mydb`.`User` (`idUser`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_User_has_Request_Request1`
-    FOREIGN KEY (`Request_idRequests`)
-    REFERENCES `mydb`.`Request` (`idRequests`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`User_has_Storage`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`User_has_Storage` (
+CREATE TABLE IF NOT EXISTS `tidytubes`.`User_has_Storage` (
   `User_idUser` INT NOT NULL,
   `Storage_idStorage` INT NOT NULL,
   PRIMARY KEY (`User_idUser`, `Storage_idStorage`),
@@ -145,38 +84,74 @@ CREATE TABLE IF NOT EXISTS `mydb`.`User_has_Storage` (
   INDEX `fk_User_has_Storage_User1_idx` (`User_idUser` ASC) VISIBLE,
   CONSTRAINT `fk_User_has_Storage_User1`
     FOREIGN KEY (`User_idUser`)
-    REFERENCES `mydb`.`User` (`idUser`)
+    REFERENCES `tidytubes`.`User` (`idUser`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_User_has_Storage_Storage1`
     FOREIGN KEY (`Storage_idStorage`)
-    REFERENCES `mydb`.`Storage` (`idStorage`)
+    REFERENCES `tidytubes`.`Storage` (`idStorage`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
--- -- -----------------------------------------------------
--- -- Table `mydb`.`Sample_has_Storage`
--- -- -----------------------------------------------------
--- CREATE TABLE IF NOT EXISTS `mydb`.`Sample_has_Storage` (
---   `Sample_idSample` INT NOT NULL,
---   `Storage_idStorage` INT NOT NULL,
---   PRIMARY KEY (`Sample_idSample`, `Storage_idStorage`),
---   INDEX `fk_Sample_has_Storage_Storage1_idx` (`Storage_idStorage` ASC) VISIBLE,
---   INDEX `fk_Sample_has_Storage_Sample1_idx` (`Sample_idSample` ASC) VISIBLE,
---   CONSTRAINT `fk_Sample_has_Storage_Sample1`
---     FOREIGN KEY (`Sample_idSample`)
---     REFERENCES `mydb`.`Sample` (`idSample`)
---     ON DELETE NO ACTION
---     ON UPDATE NO ACTION,
---   CONSTRAINT `fk_Sample_has_Storage_Storage1`
---     FOREIGN KEY (`Storage_idStorage`)
---     REFERENCES `mydb`.`Storage` (`idStorage`)
---     ON DELETE NO ACTION
---     ON UPDATE NO ACTION)
--- ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `tidytubes`.`Labgroup`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tidytubes`.`Labgroup` (
+  `idLabgroup` INT AUTO_INCREMENT NOT NULL,
+  `Labgroupname` VARCHAR(45) NULL,
+  PRIMARY KEY (`idLabgroup`))
+ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `tidytubes`.`Request`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tidytubes`.`Request` (
+  `idRequest` INT AUTO_INCREMENT NOT NULL,
+  `Name` VARCHAR(45) NULL,
+  `Cell_type` VARCHAR(45) NULL,
+  `Requestdate` VARCHAR(45) NULL,
+  `Availability` VARCHAR(45) NULL,
+  `Comment` VARCHAR(300) NULL,
+  `Position` VARCHAR(45) NULL,
+  `Amount` INT NULL,
+  `idUser` INT NOT NULL,
+  `idLabgroup` INT NOT NULL,
+  PRIMARY KEY (`idRequest`),
+  CONSTRAINT `fk_Request_User`
+    FOREIGN KEY (`idUser`)
+    REFERENCES `tidytubes`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Request_Labgroup`
+    FOREIGN KEY (`idLabgroup`)
+    REFERENCES `tidytubes`.`Labgroup` (`idLabgroup`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `tidytubes`.`User_has_Labgroup`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tidytubes`.`User_has_Labgroup` (
+  `User_idUser` INT NOT NULL,
+  `Labgroup_idLabgroup` INT NOT NULL,
+  PRIMARY KEY (`User_idUser`, `Labgroup_idLabgroup`),
+  INDEX `fk_User_has_Labgroup_Labgroup1_idx` (`Labgroup_idLabgroup` ASC) VISIBLE,
+  INDEX `fk_User_has_Labgroup_User1_idx` (`User_idUser` ASC) VISIBLE,
+  CONSTRAINT `fk_User_has_Labgroup_User1`
+    FOREIGN KEY (`User_idUser`)
+    REFERENCES `tidytubes`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_User_has_Labgroup_Labgroup1`
+    FOREIGN KEY (`Labgroup_idLabgroup`)
+    REFERENCES `tidytubes`.`Labgroup` (`idLabgroup`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
