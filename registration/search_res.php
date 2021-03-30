@@ -166,7 +166,6 @@ $table .= "</ol>";
 			<!-- RESULT TABLE -->
 			<div>
 				<?php echo $table ?>
-
 			</div>
 			<br>
 			<br>
@@ -187,6 +186,7 @@ $table .= "</ol>";
 							</div>
 						</div>
 					</div>
+
 			</form>
 	</div>
 

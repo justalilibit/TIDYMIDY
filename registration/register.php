@@ -41,6 +41,7 @@ if (isset($_POST['reg_user'])) {
 
   } else {
       $password = md5($password_1);//encrypt the password before saving in the database
+
       $_SESSION['username'] = $username;
       $_SESSION['email'] = $email;
       $_SESSION['password'] = $password;

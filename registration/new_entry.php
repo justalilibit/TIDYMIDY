@@ -2,9 +2,7 @@
 
 include('server.php');
 
-print("<br><br><br><br>");
-
-# GET STORAGEIDs CONNECTED TO CURRENT USER ------------------------------------#
+# LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
 $ls_idStorages = array(); // array holding the storageIDs of our current user
 $query_storageids = "SELECT * FROM User_has_Storage
                       WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
@@ -12,59 +10,89 @@ $query_storageids = "SELECT * FROM User_has_Storage
 $resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
 
 while ($foundID = $resStorIDs->fetch_assoc()) {
-  $idnumber = $foundID['Storage_idStorage'];
-  array_push($ls_idStorages, $idnumber);
+  $idStorage = $foundID['Storage_idStorage'];
+  array_push($ls_idStorages, $idStorage);
+#  print("Your User is connected to Freezers with ID: "); print($idStorage);
 }
 
-
-// User creates new Storage
+# CREATE A NEW STORAGE ENTRY --------------------------------------------------#
 if (isset($_POST['reg_storage'])) {
-  #printf("INSIDE STORAGE");
-  $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
-  if (empty($storagename)) { array_push($errors, "ID storage is required"); }
+  $create_storagename = mysqli_real_escape_string($db, $_POST['createStoragename']);
+
+  if (empty($create_storagename)) {
+    array_push($errors, "Unable to add existing Storage. Name is required");}
 
   if (count($errors) == 0) {
-    // Query to see if Storage already exists
-    $queryStoExis = "SELECT * FROM Storage
-                      WHERE Storagename = '$storagename'";
-    $resStorExis = mysqli_query($db,$queryStoExis) or die(mysqli_error($db));
+    // CHECK  IF STORAGE ENTRY ALREADY EXISTS
+    $res_findStorage = storageexists($db, $create_storagename);
 
-    if(!empty($resStorExis));
-      // if Storage already exists link its id to Userid
-      connectUserStorage($db, $resStorExis);
+    if ($res_findStorage) {
+      if ($res_findStorage->num_rows === 0){ // no freezer with this name exists yet
+        // CREATE NEW STORAGE
+        $create_location = mysqli_real_escape_string($db, $_POST['createLocation']);
+        $queryNewStorage = "INSERT INTO Storage (Storagename, Location)
+                  VALUES ('$create_storagename', '$create_location')";
+        mysqli_query($db, $queryNewStorage) or die(mysqli_error($db));
 
-  } else { // storage does not exist yet. Create entry and connect with User
-    // CREATE NEW STORAGE
-    $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
-    $location = mysqli_real_escape_string($db, $_POST['Location']);
-    print($storagename); print($location);
-    // $queryConnectU_S = "INSERT INTO User_has_Storage (User_idUser, Storage_idStorage)
-    //           VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idStorage')";
-    // mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
+        // CHECK THAT ENTRY WAS MADE
+        $res_storageMade = storageexists($db, $create_storagename);
+        if ($res_storageMade) {
+          if ($res_storageMade->num_rows === 0){ // Storagename is not in db ;
+            array_push($errors, "No Storage was created. An unexpected Error occured. Please try again.");;
+          } else { // Storagename is in db ;
+            // CONNECT U and S
+            connectUserStorage($db, $res_storageMade);
+          }
+        }
+      } else {
+        array_push($errors, "A storage with this name already exists. Click 'Add existing storage' or choose different name");
+      }
+    }
+  }
+} # end reg_storage
+# END: NEW STORAGE ENTRY ------------------------------------------------------#
 
+
+# ADD AN EXISTING STORAGE ENTRY -----------------------------------------------#
+if (isset($_POST['add_storage'])) {
+  $add_storagename = mysqli_real_escape_string($db, $_POST['addStoragename']);
+
+  if (empty($add_storagename)) {
+    array_push($errors, "Unable to add existing Storage. Name is required");}
+
+  if (count($errors) == 0) {
+      // MAKE SURE THAT ENTRY EXISTS
+      $resStorExis = storageexists($db, $add_storagename);
+
+      if ($resStorExis) {
+        if ($resStorExis->num_rows === 0){ // Storagename is not in db yet;
+          array_push($errors, "This Storage is not yet registered in the System. Make a new entry using 'Create New Storage'");;
+        } else {
+          connectUserStorage($db, $resStorExis);
+        }
+      }
   }
 }
-//
-$t = array();
+# END ADD AN EXISTING STORAGE ENTRY -------------------------------------------#
 
-// ADD EXISTING STORAGE
-if (isset($_POST['add_storage'])) {
-  print("ADDED STORAGE PRESSED<br>");
-  $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
-  if (empty($storagename)) {
-    array_push($errors, "ID storage is required"); }
+# FUNCTION to check if Storagename already exists -----------------------------#
+function storageexists($db, $storagename) {
+  // function to see if Storagename already exists. returns result object or
+  $query = "SELECT * FROM Storage
+                    WHERE Storagename = '$storagename'";
+  $result = mysqli_query($db, $query) or die(mysqli_error($db));
+  return $result;
+}
 
-  if (count($errors) == 0) {
-    // Query to see if Storage already exists
-    $queryStoExis = "SELECT * FROM Storage
-                      WHERE Storagename = '$storagename'";
-    $resStorExis = mysqli_query($db,$queryStoExis) or die(mysqli_error($db));
-
-    if(!empty($resStorExis)); // if Storage already exists link its id to Userid
-      connectUserStorage($db, $resStorExis);
-  } else{
-   array_push($errors, "This Storage is not yet registered in the System. Make a new entry using 'Create New Storage'");;
- }
+# FUNCTION to check if User already connected to Storage ----------------------#
+function alreadyconnected($db, $idStorage) {
+  $query = "SELECT * FROM User_has_Storage
+            WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+            AND Storage_idStorage = '$idStorage'
+            ";
+            // print($query);
+  $result = mysqli_query($db, $query) or die(mysqli_error($db));
+  return $result;
 }
 
 # FUNCTION connecting current User to Storage that fits the prerun query ------#
@@ -73,56 +101,51 @@ if (isset($_POST['add_storage'])) {
    while($storage = $res_foundStor->fetch_assoc()){
      $idStorage = $storage["idStorage"];
    }
-   // create query for connecting User and Freeezer and run it
-   $queryConnectU_S = "INSERT INTO User_has_Storage (User_idUser, Storage_idStorage)
-             VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idStorage')";
-   mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
- }
+   $alreadyexists = alreadyconnected($db, $idStorage);
 
-
-# CREATE A NEW ENTRY #--------------------------------------------------------#
-if (isset($_POST['reg_entry'])) {
-  // receive all input values from the entry form
-  $samplename = mysqli_real_escape_string($db, $_POST['samplename']);
-  $celltype = mysqli_real_escape_string($db, $_POST['celltype']);
-
-  // $idfreezer = mysqli_real_escape_string($db, $_POST['idfreezer']);
-
-
-  $storagename = mysqli_real_escape_string($db, $_POST['Storagename']);
-  $idStorage = mysqli_real_escape_string($db, $_POST['idStorage']);
-  $rack = mysqli_real_escape_string($db, $_POST['rack']);
-
-
-  $position = mysqli_real_escape_string($db, $_POST['position']);
-  $amount = mysqli_real_escape_string($db, $_POST['amount']);
-  $frozendate = mysqli_real_escape_string($db, $_POST['frozendate']);
-  $availability = mysqli_real_escape_string($db, $_POST['availability']);
-  $comment = mysqli_real_escape_string($db, $_POST['comment']);
-
-  // entry validation: ensure that the form is correctly filled ...
-  // by adding (array_push()) corresponding error unto $errors array
-  if (empty($samplename)) { array_push($errors, "Sample name is required"); }
-  if (empty($celltype)) { array_push($errors, "Cell type is required"); }
-  // if (empty($idfreezer)) { array_push($errors, "Freezer is required"); }
-  if (empty($position)) { array_push($errors, "Position is required"); }
-  // if (empty($amount)) { array_push($errors, "Amount is required"); }
-  if (empty($frozendate)) { array_push($errors, "Frozen date is required"); }
-
-
-  // Finally, add the new entry in the sample table
-  if (count($errors) == 0) {
-
-
-  	$query = "INSERT INTO Sample (Name, Cell_type, idStorage, Rack, Position, Frozendate, Amount, Availability, Comment, idUser)
-  			  VALUES('$samplename', '$celltype', '$idStorage', '$rack', '$position', '$frozendate', '$amount', '$availability', '$comment','".$_SESSION["userdata"]["idUser"]."')";
-    # print("<br><br><br>");
-    # print($query);
-    mysqli_query($db, $query) or die(mysqli_error($db));
-
+   if ($alreadyexists) {
+     if ($alreadyexists->num_rows === 0){ // User and Storage not yet connected
+       // connecting User and Storage
+       $queryConnectU_S = "INSERT INTO User_has_Storage (User_idUser, Storage_idStorage)
+                 VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idStorage')";
+       mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
+    }
   }
 }
-# END: CREATE A NEW ENTRY #----------------------------------------------------#
+
+ # CREATE A NEW ENTRY #--------------------------------------------------------#
+ if (isset($_POST['reg_entry'])) {
+   // receive all input values from the entry form
+   $samplename = mysqli_real_escape_string($db, $_POST['samplename']);
+   $celltype = mysqli_real_escape_string($db, $_POST['celltype']);
+   $idStorage = mysqli_real_escape_string($db, $_POST['idStorage']);
+   $position = mysqli_real_escape_string($db, $_POST['position']);
+   $amount = mysqli_real_escape_string($db, $_POST['amount']);
+   $frozendate = mysqli_real_escape_string($db, $_POST['frozendate']);
+   $availability = mysqli_real_escape_string($db, $_POST['availability']);
+   $comment = mysqli_real_escape_string($db, $_POST['comment']);
+
+   // entry validation: ensure that the form is correctly filled ...
+   if (empty($samplename)) { array_push($errors, "Sample name is required"); }
+   if (empty($celltype)) { array_push($errors, "Cell type is required"); }
+   if (empty($position)) { array_push($errors, "Position is required"); }
+   if (empty($amount)) { array_push($errors, "Amount is required"); }
+   if (empty($frozendate)) { array_push($errors, "Frozen date is required"); }
+
+
+   // Finally, add the new entry in the sample table
+   if (count($errors) == 0) {
+   	$query = "INSERT INTO Sample (Name, Cell_type, idStorage,  Position, Frozendate, Amount, Availability, Comment, idUser)
+   			  VALUES('$samplename', '$celltype', '$idStorage', '$position', '$frozendate', '$amount', '$availability', '$comment','".$_SESSION["userdata"]["idUser"]."')";
+     # print("<br><br><br>");
+     # print($query);
+     mysqli_query($db, $query) or die(mysqli_error($db));
+
+
+   }
+ }
+ # END: CREATE A NEW ENTRY #----------------------------------------------------#
+
 
 ?>
 <!DOCTYPE html>
@@ -147,8 +170,8 @@ if (isset($_POST['reg_entry'])) {
 							<h2>Enter the details of your sample</h2>
 
 
-                                    <div class="row">
-                                      <div class="col-sm-3 d-sm-flex align-items-center">
+                                  <div class="row">
+                                    <div class="col-sm-3 d-sm-flex align-items-center">
                                         <label class="m-sm-0">Tube name</label>
                                         <input
                                           type="text"
@@ -189,7 +212,7 @@ if (isset($_POST['reg_entry'])) {
                                     </div>
                                 </div>
 
-                                <div class="row">
+                            <div class="row">
                                 <div class="col-sm-3 d-sm-flex align-items-center">
                                   <label class="m-sm-0">Position</label>
                                   <input
@@ -231,15 +254,17 @@ if (isset($_POST['reg_entry'])) {
                                     </div>
                                </div>
 
+
                                 <div class="px-sm-2 col-sm-7 d-sm-flex align-items-center mt-2 mt-sm-0">
-                                  <label for="exampleFormControlTextarea1">Comments</label>
-                                  <textarea class="form-control"
-                                  rows="10"
-                                  name="comment"
-                                  value="<?php echo $comment; ?>"
-                                  placeholder="Use that one protocol that works better, place it in the fridge at the end of the corridor, position right, IMPORTANT I NEED THIS TO BE DONE BY 15:30"
-                                  ></textarea>
+                                    <label for="exampleFormControlTextarea1">Comments</label>
+                                    <textarea class="form-control"
+                                    rows="10"
+                                    name="comment"
+                                    value="<?php echo $comment; ?>"
+                                    placeholder="Use that one protocol that works better, place it in the fridge at the end of the corridor, position right, IMPORTANT I NEED THIS TO BE DONE BY 15:30"
+                                    ></textarea>
                                 </div>
+
                             </div>
                             <br>
 
@@ -267,8 +292,8 @@ if (isset($_POST['reg_entry'])) {
 					                  <h5 class="modal-title">Add existing storage</h5>
 					                </div>
 					                <div class="modal-body">
-					                  <input type="text" name="Location" value="<?php echo $Location; ?>">
-					                  <button type="submit" class="btn" name="reg_storage">Add</button>
+					                  <input type="text" name="addStorage" value="<?php echo $add_storage; ?>">
+					                  <button type="submit" class="btn" name="add_storage">Add EXISTING storage</button>
 					                </div>
 					              </div>
 					            </div>
@@ -290,9 +315,9 @@ if (isset($_POST['reg_entry'])) {
                                         </div>
                                         <div class="modal-body">
                                   <label>Storage name: </label>
-                                  <input type="text" name="Storagename" value="<?php echo $storagename; ?>">
+                                  <input type="text" name="createStoragename" value="<?php echo $create_storagename; ?>">
                                   <label>Storage location: </label>
-                                  <input type="text" name="Location" value="<?php echo $location; ?>">
+                                  <input type="text" name="createLocation" value="<?php echo $create_location; ?>">
                                           <button type="submit" class="btn btn-success" name="reg_storage">Create new storage</button>
 
 
@@ -301,16 +326,14 @@ if (isset($_POST['reg_entry'])) {
 					                <div class="modal-body">
 					                  <input type="text" name="Storagename" value="<?php echo $storagename; ?>">
 					                  <button type="submit" class="btn btn-success" name="reg_storage">Add</button>
+
 					                </div>
+
 
 					              </div>
 					            </div>
 					          </div>
 					        </div>
-
-
-
-
 
   		</form>
   	</div>
@@ -349,44 +372,3 @@ if (isset($_POST['reg_entry'])) {
 </body>
 </html>
 
-
-# LILILS BUTTONS AND OPTION STORAGE SELECT THINGY
-
-
-
-              <!-- CREATE NEW STORAGE ENTRY -->
-							  <button type="button" class="btn" data-toggle="modal" data-target="#myModal">Create new storage</button>
-					      <div id="myModal" class="modal fade" role="dialog">
-					        <div class="modal-dialog">
-					            <!-- Modal content-->
-					            <div class="modal-content">
-					              <div class="modal-header">
-					                <button type="button" class="close" data-dismiss="modal">&times;</button>
-					                <h5 class="modal-title">Create new storage</h5>
-					              </div>
-					              <div class="modal-body">
-                          <label>Storage name: </label>
-                          <input type="text" name="Storagename" value="<?php echo $storagename; ?>">
-                          <label>Storage location: </label>
-                          <input type="text" name="Location" value="<?php echo $location; ?>">
-					                <button type="submit" class="btn btn-success" name="reg_storage">Create new storage</button>
-
-
-
-                 <!-- ADD EXISTING STORAGE-->
-                  <button type="button" class="btn" data-toggle="modal" data-target="#myM">Add existing storage</button>
-      					    <div id="myM" class="modal fade" role="dialog">
-      					        <div class="modal-dialog">
-      					             <!-- Modal content-->
-      					          <div class="modal-content">
-      					            <div class="modal-header">
-      					                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-      					                 <h5 class="modal-title">Add new storage</h5>
-      					            </div>
-      					            <div class="modal-body">
-      					                 <input type="text" name="Addstorage" value="<?php echo $storagename; ?>">
-      					                 <button type="submit" class="btn btn-success" name="add_storage">Add existing storage</button>
-      					            </div>
-      					          </div>
-      					        </div>
-      					      </div>
