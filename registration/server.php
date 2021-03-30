@@ -13,8 +13,9 @@ $idStorage = $storagename = $location = "";
 $create_storagename = $create_location = $add_storagename = "";
 $errors_registration = array('username' => '', 'email' => '', 'password_1' => '', 'password_2' => '', 'fullname' => '', 'cemail' => '', 'cphone' => '');
 // connect to the database
-# $db = mysqli_connect('localhost', 'albert', '/Puiyuaru1616', 'tidytubes');   # albert pw
-$db = mysqli_connect('localhost', 'tidytubes', 'Welcome123%', 'tidytubes');    # jo & lili pw
+ $db = mysqli_connect('localhost', 'albert', '/Puiyuaru1616', 'mydb');   # albert pw
+// $db = mysqli_connect('localhost', 'tidytubes', 'Welcome123%', 'mydb');    # jo & lili pw
+
 
 
 

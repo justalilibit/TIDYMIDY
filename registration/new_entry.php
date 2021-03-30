@@ -148,9 +148,9 @@ function alreadyconnected($db, $idStorage) {
    if (empty($position)) { array_push($errors, "Position is required"); }
    if (empty($amount)) { array_push($errors, "Amount is required"); }
    if (empty($frozendate)) { array_push($errors, "Frozen date is required"); }
+
    if (empty($idStorage)) { array_push($errors, "Please select a valid Storage"); }
    #if (!is_int($idStorage)) { array_push($errors, "Please select a valid Storage"); print($idStorage); }
-
 
    // Finally, add the new entry in the sample table
    if (count($errors) == 0) {

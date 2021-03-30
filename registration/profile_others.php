@@ -1,6 +1,5 @@
 <?php include('server.php');
-
-$query = "SELECT * FROM User WHERE Username='".$_SESSION["username"]."' ";
+$query = "SELECT * FROM User WHERE Username='".$_POST['idSample']."' ";
 $results = mysqli_query($db, $query) or die(mystringsqli_error($db));
 while($row = $results->fetch_assoc()) {
     $Full_name = $row["Full_name"];
