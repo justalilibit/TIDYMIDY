@@ -1,7 +1,6 @@
 <?php
 include('server.php');
-
-print("<br><br><br>");
+#print("<br><br><br>");
 
 // COMMENT LILI: 	there are 2 ways to end up here:
 // 											a. over simple keyword search from Index
@@ -75,19 +74,23 @@ $results = mysqli_query($db, $query) or die(mysqli_error($db));
 if ($results->num_rows > 0) {
 	echo "<table border='1' cellspacing='5' cellpadding='4' id='resultTable' style='width:80%'>
 					<thead>
-						<tr>
+						<tr class='text-center'>
 
-							<th onclick='sortTable(0)'>Name</th>
-							<th onclick='sortTable(1)'>Cell Type</th>
-							<th onclick='sortTable(2)'>Freezer name</th>
-							<th onclick='sortTable(3)'>Freezer Location</th>
-							<th onclick='sortTable(10)'>Position</th>
-							<th onclick='sortTable(5)'>Date</th>
-							<th onclick='sortTable(6)'>Amount</th>
-							<th onclick='sortTable(7)'>Availability</th>
-							<th onclick='sortTable(8)'>Owner</th>
-							<th onclick='sortTable(9)'>Comment</th>
-							<th>Delete</th>
+							<th class='text-center' onclick='sortTable(0)'>Name <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-sort-alpha-down' viewBox='0 0 16 16'>
+							  <path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z'/>
+							  <path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z'/>
+							</svg></th>
+							<th class='text-center' onclick='sortTable(1)'>Cell Type</th>
+							<th class='text-center' onclick='sortTable(2)'>Freezer name</th>
+							<th class='text-center' class='text-center' onclick='sortTable(3)'>Freezer Location</th>
+							<th class='text-center' onclick='sortTable(10)'>Position</th>
+							<th class='text-center' onclick='sortTable(5)'>Date</th>
+							<th class='text-center' onclick='sortTable(6)'>Amount</th>
+							<th class='text-center' onclick='sortTable(7)'>Availability</th>
+							<th class='text-center' onclick='sortTable(8)'>Owner</th>
+							<th class='text-center' onclick='sortTable(9)'>Comment</th>
+							<th>DELETE
+								</th>
 						</tr>
 					</thead>
 					<tbody>";
@@ -115,22 +118,20 @@ if ($results->num_rows > 0) {
 		}
 
 		$table .= "<tr class='item'>";
-		$table .= "<td>" . $row["Name"] . "</td>";
-		$table .= "<td>" . $row["Cell_type"] . "</td>";
-		$table .= "<td>" . $storagename . "</td>";
-		$table .= "<td>" . $location . "</td>";
-		$table .= "<td>" . $row["Position"] .	"</td>";
-		$table .= "<td>" . $row["Frozendate"] . "</td>";
-		$table .= "<td>" . $row["Amount"] . "</td>";
-		$table .= "<td>" . $row["Availability"] . "</td>";
+		$table .= "<td class='text-center'>" . $row["Name"] . "</td>";
+		$table .= "<td class='text-center'>" . $row["Cell_type"] . "</td>";
+		$table .= "<td class='text-center'>" . $storagename . "</td>";
+		$table .= "<td class='text-center'>" . $location . "</td>";
+		$table .= "<td class='text-center'>" . $row["Position"] .	"</td>";
+		$table .= "<td class='text-center'>" . $row["Frozendate"] . "</td>";
+		$table .= "<td class='text-center'>" . $row["Amount"] . "</td>";
+		$table .= "<td class='text-center'>" . $row["Availability"] . "</td>";
 		// <a style="color:blue" href="profile_others.php"> $idOwner </a>
-		$table .= "<td>" . $idOwner . "</td>";
-		$table .= "<td>" . $row["Comment"] . 	"</td>";
-		$table .=	"<td> <form action='delete.php' method='post'>
-											<div>
-									    <button name = delete_entry type='submit'>Delete</button>
-									  </div>
-										<input type='hidden' name='idSample' value=".$row['idSample']." />
+		$table .= "<td class='text-center'> <a href='profile_others.php'>" . $idOwner . "</a> </td>";
+		$table .= "<td class='text-center'>" . $row["Comment"] . 	"</td>";
+		$table .=	"<td class='text-center'> <form action='delete.php' method='post'>
+										<button name=delete_entry class='btn btn-danger'> <img src='img/trash.svg'> </button>
+										<input type='hidden' name='idSample' value="; echo $row["idSample"]; "/>
 		            </form>
 		          </td>";
 		$table .= "</tr>";

@@ -29,7 +29,17 @@ if (isset($_POST['reg_info'])) {
       }
   }
 
-  // Finally, REGISTER user if there are no errors in the form
+
+  if (empty($Contact_phone)) {
+
+  } else {
+      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them"; }}
+
+
+  if (empty($Contact_phone)) {
+
+  } else {
+      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them"; }}
   if(array_filter($errors_registration)){
 
   } else {
@@ -38,7 +48,6 @@ if (isset($_POST['reg_info'])) {
   	mysqli_query($db, $query) or die(mysqli_error($db));
     $query = "SELECT * FROM User WHERE Username='$username' ";
     $results = mysqli_query($db, $query) or die(mysqli_error($db));
-    $_SESSION['userdata'] = mysqli_fetch_assoc($results);
   	header('location: login.php');
   }
 }
