@@ -3,6 +3,7 @@
 include('server.php');
 # print("<br><br><br><br>");
 
+
 # LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
 $ls_idStorages = array(); // array holding the storageIDs of our current user
 $query_storageids = "SELECT * FROM User_has_Storage
@@ -13,12 +14,14 @@ $resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
 while ($foundID = $resStorIDs->fetch_assoc()) {
   $idStorage = $foundID['Storage_idStorage'];
   array_push($ls_idStorages, $idStorage);
+
 #  print("Your User is connected to Freezers with ID: "); print($idStorage);
 }
 
 # CREATE A NEW STORAGE ENTRY --------------------------------------------------#
 if (isset($_POST['reg_storage'])) {
   $create_storagename = mysqli_real_escape_string($db, $_POST['createStoragename']);
+
 
   if (empty($create_storagename)) {
     array_push($errors, "Unable to add existing Storage. Name is required");}
@@ -50,6 +53,7 @@ if (isset($_POST['reg_storage'])) {
       }
     }
   }
+
 } # end reg_storage
 # END: NEW STORAGE ENTRY ------------------------------------------------------#
 
@@ -62,6 +66,7 @@ if (isset($_POST['add_storage'])) {
     array_push($errors, "Unable to add existing Storage. Name is required");}
 
   if (count($errors) == 0) {
+
       // MAKE SURE THAT ENTRY EXISTS
       $resStorExis = storageexists($db, $add_storagename);
 
@@ -95,6 +100,16 @@ function alreadyconnected($db, $idStorage) {
   $result = mysqli_query($db, $query) or die(mysqli_error($db));
   return $result;
 }
+# END ADD AN EXISTING STORAGE ENTRY -------------------------------------------#
+
+// # FUNCTION to check if Storagename already exists -----------------------------#
+// function storageexists($db, $storagename) {
+//   // function to see if Storagename already exists. returns result object
+//   $query = "SELECT * FROM Storage
+//                     WHERE Storagename = '$storagename'";
+//   $results = mysqli_query($db, $query) or die(mysqli_error($db));
+//   return $results;
+// }
 
 # FUNCTION connecting current User to Storage that fits the prerun query ------#
  function connectUserStorage($db, $res_foundStor) {
@@ -102,6 +117,7 @@ function alreadyconnected($db, $idStorage) {
    while($storage = $res_foundStor->fetch_assoc()){
      $idStorage = $storage["idStorage"];
    }
+
    $alreadyexists = alreadyconnected($db, $idStorage);
 
    if ($alreadyexists) {
@@ -154,6 +170,7 @@ function alreadyconnected($db, $idStorage) {
 <!DOCTYPE html>
 <html>
 <head>
+
 
       <script language="JavaScript" type="text/javascript">
 
@@ -214,6 +231,7 @@ function alreadyconnected($db, $idStorage) {
                                     <div class="col-sm-3 d-sm-flex align-items-center">
                                         <label class="m-sm-0">For who are these tubes?</label>
                                         <select name="availability" class="custom-select"
+
                                             <option selected>Privat</option>
                                             <option value="1">Privat</option>
                                             <option value="2">Ask me first</option>
@@ -247,6 +265,7 @@ function alreadyconnected($db, $idStorage) {
 
                                 <div class="input-group">
                                     <br>
+
                                     <!-- DISPLAY CONNECTED STORAGES -->
                                     <div class="input-group">
                                       <label for="idStorage">Storage:</label>
@@ -275,6 +294,7 @@ function alreadyconnected($db, $idStorage) {
                                     placeholder="Use that one protocol that works better, place it in the fridge at the end of the corridor, position right, IMPORTANT I NEED THIS TO BE DONE BY 15:30"
                                     ></textarea>
                                 </div>
+
 
                             </div>
                             <br>
@@ -362,6 +382,7 @@ function alreadyconnected($db, $idStorage) {
                   <path fill-rule="evenodd" d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
                   <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
                   <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+
               </svg></button> : Adds a new tube to an existing freezer</p>
 
               <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal" disabled>Add EXISTING Storage
