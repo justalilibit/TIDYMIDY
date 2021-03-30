@@ -3,33 +3,117 @@
 include('server.php');
 print($_SESSION["userdata"]["idUser"]);
 
-# LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
-$ls_idRequests = array(); // array holding the requestIDs of our current user
-$query_requestids = "SELECT * FROM User_has_Request
+# LOAD LABGROUPIDs CONNECTED TO CURRENT USER -----------------------------------#
+$ls_idLabgroup = array(); // array holding the requestIDs of our current user
+$query_labgroupids = "SELECT * FROM User_has_Labgroup
                       WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
                         ";
 
-$resResIDs = mysqli_query($db,$query_requestids) or die(mysqli_error($db));
+$resResIDs = mysqli_query($db,$query_labgroupids) or die(mysqli_error($db));
 
 while ($foundID = $resResIDs->fetch_assoc()) {
-  $idRequest = $foundID['Request_idRequests'];
-  $idUser = $foundID['User_idUser'];
-  array_push($ls_idRequests, $idRequest);
-  print("<br><br><br>");
-  print("<br><br><br>");
-  print("<br><br><br>");
+ $idLabgroup= $foundID['Labgroup_idLabgroup'];
+  array_push($ls_idLabgroup, $idLabgroup);
+  
+}
+# CREATE A NEW STORAGE ENTRY --------------------------------------------------#
+if (isset($_POST['reg_labgroup'])) {
+  $create_labgroupname = mysqli_real_escape_string($db, $_POST['createLabgroupname']);
 
-   print("Your User is connected to Request with ID: "); print($idUser);
+  if (empty($create_labgroupname)) {
+    array_push($errors, "Unable to add Labgroup. Name is required");}
+
+  if (count($errors) == 0) {
+    // CHECK  IF STORAGE ENTRY ALREADY EXISTS
+    $res_findLabgroup = labgroupexists($db, $create_labgroupname);
+
+    if ($res_findLabgroup) {
+      if ($res_findLabgroup->num_rows === 0){ // no freezer with this name exists yet
+        // CREATE NEW STORAGE
+        $queryNewLabgroup = "INSERT INTO Labgroup (Labgroupname)
+                  VALUES ('$create_labgroupname')";
+        mysqli_query($db, $queryNewLabgroup) or die(mysqli_error($db));
+
+        // CHECK THAT ENTRY WAS MADE
+        $res_LabgroupMade = labgroupexists($db, $create_labgroupname);
+        if ($res_LabgroupMade) {
+          if ($res_LabgroupMade->num_rows === 0){ // Storagename is not in db ;
+            array_push($errors, "No Lab group was created. An unexpected Error occured. Please try again.");;
+          } else { // Storagename is in db ;
+            // CONNECT U and S
+            connectUserLabgroup($db, $res_LabgroupMade);
+          }
+        }
+      } else {
+        array_push($errors, "A Lab Group with this name already exists. Click 'Add existing Lab Group' or choose different name");
+      }
+    }
+  }
+} # end reg_storage
+# END: NEW STORAGE ENTRY ------------------------------------------------------#
+
+
+# ADD AN EXISTING STORAGE ENTRY -----------------------------------------------#
+if (isset($_POST['add_labgroup'])) {
+  $add_labgroupname = mysqli_real_escape_string($db, $_POST['addLabgroupname']);
+
+  if (empty($add_labgroupname)) {
+    array_push($errors, "Unable to add existing Lab group. Name is required");}
+
+  if (count($errors) == 0) {
+      // MAKE SURE THAT ENTRY EXISTS
+      $resLabExis = labgroupexists($db, $add_labgroupname);
+
+      if ($resLabExis) {
+        if ($resLabExis->num_rows === 0){ // Storagename is not in db yet;
+          array_push($errors, "This Lab Group is not yet registered in the System. Make a new entry using 'Create New Lab Group'");;
+        } else {
+          connectUserLabgroup($db, $resLabExis);
+        }
+      }
+  }
+}
+# END ADD AN EXISTING STORAGE ENTRY -------------------------------------------#
+
+# FUNCTION to check if Storagename already exists -----------------------------#
+function Labgroupexists($db, $labgroupname) {
+  // function to see if Storagename already exists. returns result object or
+  $query = "SELECT * FROM Labgroup
+                    WHERE Labgroupname = '$labgroupname'";
+  $result = mysqli_query($db, $query) or die(mysqli_error($db));
+  return $result;
 }
 
+# FUNCTION to check if User already connected to Storage ----------------------#
+function alreadyconnected($db, $idLabgroup) {
+  $query = "SELECT * FROM User_has_Labgroup
+            WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+            AND Labgroup_idLabgroup = '$idLabgroup'
+            ";
+            // print($query);
+  $result = mysqli_query($db, $query) or die(mysqli_error($db));
+  return $result;
+}
 
+# FUNCTION connecting current User to Storage that fits the prerun query ------#
+ function connectUserLabgroup($db, $res_foundLab) {
+   $idLabgroup ="";
+   while($labgroup = $res_foundLab->fetch_assoc()){
+     $idLabgroup = $labgroup["idLabgroup"];
+   }
+   $alreadyexists = alreadyconnected($db, $idLabgroup);
 
-// NEW ENTRY
+   if ($alreadyexists) {
+     if ($alreadyexists->num_rows === 0){ // User and Storage not yet connected
+       // connecting User and Storage
+       $queryConnectU_L = "INSERT INTO User_has_Labgroup (User_idUser, Labgroup_idLabgroup)
+                 VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idLabgroup')";
+       mysqli_query($db, $queryConnectU_L) or die(mysqli_error($db));
+    }
+  }
+}
+// NEW REQUEST
 if (isset($_POST['reg_request'])) {
-  print("INSIDE REEEQUEEEST");
-  print("INSIDE REEEQUEEEST");
-  print("INSIDE REEEQUEEEST");
-  print("<br><br><br>");
 
   // receive all input values from the entry form
   $samplename = mysqli_real_escape_string($db, $_POST['samplename']);
@@ -38,73 +122,28 @@ if (isset($_POST['reg_request'])) {
   $comment = mysqli_real_escape_string($db, $_POST['comment']);
   $position = mysqli_real_escape_string($db, $_POST['position']);
   $requestdate = mysqli_real_escape_string($db, $_POST['requestdate']);
+  $availability = mysqli_real_escape_string($db, $_POST['availability']);
+  $idLabgroup = mysqli_real_escape_string($db, $_POST['idLabgroup']);
+
+
 // entry validation: ensure that the form is correctly filled ...
   // by adding (array_push()) corresponding error unto $errors array
   if (empty($samplename)) { array_push($errors, "Sample name is required"); }
   if (empty($celltype)) { array_push($errors, "Cell type is required"); }
-  #if (empty($position)) { array_push($errors, "Position is required"); }
+  if (empty($position)) { array_push($errors, "Position is required"); }
   if (empty($amount)) { array_push($errors, "Amount is required"); }
+  if (empty($requestdate)) { array_push($errors, "Request date is required"); }
+  if (empty($idLabgroup)) { array_push($errors, "Please select a valid Labgroup"); }
 
   // Finally, add the new entry in the sample table
   if (count($errors) == 0) {
-  	$query = "INSERT INTO Request (Name, Cell_type, Amount, Comment, Position, Date)
-  			  VALUES('$samplename', '$celltype', '$amount', '$comment', '$position', '$requestdate')";
+  	$query = "INSERT INTO Request (Name, Cell_type, Amount, Comment, Position, Requestdate, Availability, idUser, idLabgroup)
+  			  VALUES('$samplename', '$celltype', '$amount', '$comment', '$position', '$requestdate', '$availability', '".$_SESSION["userdata"]["idUser"]."', '$idLabgroup')";
     print($query);
     mysqli_query($db, $query) or die(mysqli_error($db));
 
   }
 }
-
-if (isset($_POST['see_request'])) {
-  print("<br><br><br>");
-  print("<br><br><br>");
-  print("<br><br><br>");
-
-  $query = "SELECT * FROM Request";
-
-  print($query);
-  print("<br><br><br>");
-  $result = mysqli_query($db,$query);
-  #echo "<table>";
-  connectUserRequest($db,$result);
-
-foreach($ls_idRequests as $idRequest) {
-  print("INISDE FOREACH");
-  $request_sql = "SELECT * FROM Request WHERE idRequests = '$idRequest'";
-  $res_request =mysqli_query($db, $request_sql) or die(mysqli_error($db));
-  while ($row = mysqli_fetch_array($res_request)){
-    print("HHHHH");
-    print("<br><br><br>");
-    print("<br><br><br>");
-    $table = $row['idRequests']."</td><td>".$row['Name']. "</td></tr>";
-  }
-}}
-#  while ($row = mysqli_fetch_array($result)){
-  #  echo $row['idRequests'];
-  #  echo"<tr>>td>".$row['idRequests']."</td><td>".$row['Date']. "</td></tr>";
-# }
-function alreadyconnected($db,$idRequest){
-  $query = "SELECT * FROM User_has_Request
-            WHERE User_idUser = '".$_SESSION["userdata"]["idUser"] ."'
-            AND Request_idRequests = '$idRequest'
-            ";
-  $result = mysqli_query($db,$query) or die (mysqli_error($db));
-  return $result;
-}
-#FUNCTION connecting current User to Storage that fits the prerun query ------#
-function connectUserRequest($db, $res_query) {
-  $idRequest ="";
-  while($request = $res_query->fetch_assoc()){
-    $idRequest = $request["idRequests"];
-  }
-  $alreadyexists = alreadyconnected($db,$idRequest);
-  if($alreadyexists){
-    if($alreadyexists->num_rows === 0){
-        // create query for connecting User and Freeezer and run it
-        $queryConnectU_R = "INSERT INTO User_has_Request (User_idUser, Request_idRequests)
-                  VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idRequest')";
-        mysqli_query($db, $queryConnectU_R) or die(mysqli_error($db));
-}}}
 
 
 ?>
@@ -159,11 +198,11 @@ function connectUserRequest($db, $res_query) {
                                 value="<?php echo $amount; ?>"
                                 >
                             </div>
-                            <div class="col-sm-3 d-sm-flex align-items-center">
+                            <<div class="col-sm-3 d-sm-flex align-items-center">
                                 <label class="m-sm-0">For who are these tubes?</label>
-                                <select class="custom-select" id="owner">
-                                    <option selected>Private</option>
-                                    <option value="1">Private</option>
+                                <select name="availability" class="custom-select"
+                                    <option selected>Privat</option>
+                                    <option value="1">Privat</option>
                                     <option value="2">Ask me first</option>
                                     <option value="3">Public</option>
                                   </select>
@@ -189,6 +228,24 @@ function connectUserRequest($db, $res_query) {
                               value="<?php echo $requestdate;?>"
                               >
                           </div>
+                          <div class="input-group">
+                              <br>
+                              <!-- DISPLAY CONNECTED STORAGES -->
+                              <div class="input-group">
+                                <label for="idLabgroup">Labgroup:</label>
+                                <select name='idLabgroup'>
+                                  <?php
+                                  foreach($ls_idLabgroup as $idLabgroup) {
+                                    $labgroup_sql = "SELECT * FROM Labgroup WHERE idLabgroup = '$idLabgroup'";
+                                    $res_labgroup =mysqli_query($db, $labgroup_sql) or die(mysqli_error($db));
+                                      while ($labgroupEntry = $res_labgroup->fetch_assoc()){
+                                        ?><option value='<?php echo $labgroupEntry['idLabgroup']; ?>'><?php echo $labgroupEntry['Labgroupname']; ?></option><?php
+                                      }
+                                  }?>
+                                  <option selected >nothing selected</option>;
+                                </select>
+                              </div>
+                         </div>
                         </div>
                     <div class="row">
                         <div class="px-sm-2 col-sm-7 d-sm-flex align-items-center mt-2 mt-sm-0">
@@ -205,11 +262,62 @@ function connectUserRequest($db, $res_query) {
 
                     <br>
                     <button type="submit" class="btn" name="reg_request">Add Request</button>
-                    <button type="submit" class="btn" name="see_request">SEE Request</button>
-                    <label>table</label>
-                    <?php echo $table ?>
-                    </div>
+
+
+                    <!--- ADD_BUTTON: THIS IS ADDING AN EXISTING ALREADY THERE LABGROUP --------------------------------------------------------------------------------------------------------------------->
+
+                                                <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal">Add EXISTING Storage
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16">
+                                                  <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
+                                                </svg></button>
+                    					      <div id="myModal" class="modal fade" role="dialog">
+                    					            <div class="modal-dialog">
+
+                    					              <!-- Modal content-->
+                    					              <div class="modal-content">
+                    					                <div class="modal-header">
+                    					                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    					                  <h5 class="modal-title">Add existing labgroup</h5>
+                    					                </div>
+                    					                <div class="modal-body">
+                    					                  <input type="text" placeholder='Name of existing Storage' name="addLabgroupname" value="<?php echo $add_labgroupname; ?>">
+                    					                  <button type="submit" class="btn" name="add_labgroup">Add EXISTING Lab Group</button>
+                    					                </div>
+                    					              </div>
+                    					            </div>
+                    					          </div>
+                                              </div>
+
+                                              <br>
+                    <!--- CREATE_BUTTON: THIS IS CREATING A NEW LAB GROUP---------------------------------------------------------------------------------------------------------------------------->
+
+                                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal_create">Create NEW Lab Group <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
+                                                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                                                          </svg></button>
+                                                    <div id="myModal_create" class="modal fade" role="dialog">
+                                                      <div class="modal-dialog">
+                                                          <!-- Modal content-->
+                                                          <div class="modal-content">
+                                                            <div class="modal-header">
+                                                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                              <h5 class="modal-title">Create new labgroup
+                                                            </div>
+                                                            <div class="modal-body">
+                                                              <label>Labgroup name: </label>
+                                                              <input type="text" placeholder='New Labgroup Name' name="createLabgroupname" value="<?php echo $create_labgroupname; ?>">
+
+                                                              <button type="submit" class="btn btn-success" name="reg_labgroup">Create new storage</button>
+
+                    					              </div>
+                    					            </div>
+                    					          </div>
+                    					        </div>
+                                    </div>
+
           		</form>
+              <form method="post" action="request_res.php">
+              <button type="submit" class="btn" name="see_request">SEE Request</button>
+            </form>
           	</div>
         		  <div class="container">
         			<h3>How it works:</h3>

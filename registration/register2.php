@@ -27,7 +27,11 @@ if (isset($_POST['reg_info'])) {
   } else {
       if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them"; }}
 
-  // Finally, REGISTER user if there are no errors in the form
+
+  if (empty($Contact_phone)) {
+
+  } else {
+      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them"; }}
   if(array_filter($errors_registration)){
 
   } else {

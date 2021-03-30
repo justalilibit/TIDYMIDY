@@ -1,11 +1,26 @@
 <?php
 include('server.php');
-print("<br><br>");
+
 // COMMENT LILI: 	there are 2 ways to end up here:
 // 											a. over simple keyword search from Index
 //											b. over Advanced Search
 // 								The following if statement will process the $_POST variables accordingly
 // 								The query search and the result presentation is the same for both cases.
+
+# LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
+$ls_idStorages = array(); // array holding the storageIDs of our current user
+$query_storageids = "SELECT * FROM User_has_Storage
+                      WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+                      ";
+$resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
+
+while ($foundID = $resStorIDs->fetch_assoc()) {
+  $idStorage = $foundID['Storage_idStorage'];
+  array_push($ls_idStorages, $idStorage);
+#  print("Your User is connected to Freezers with ID: "); print($idStorage);
+}
+// CREATE ARRAY FOR SEARCH QUERY
+$where_in = implode(',', $ls_idStorages);
 
 // SIMPLE SEARCH with KEYWORD from INDEX PAGE ----------------------------------
 if (isset($_POST['simple_search'])) {
@@ -14,7 +29,8 @@ if (isset($_POST['simple_search'])) {
 
 	$query = "SELECT *
 						FROM Sample
-						WHERE ( IF (LENGTH ('$searchword') > 0, Name LIKE '%$searchword%', 0))
+						WHERE idStorage IN ($where_in)
+						AND ( IF (LENGTH ('$searchword') > 0, Name LIKE '%$searchword%', 0))
 						'";
 
 
@@ -30,7 +46,8 @@ elseif (isset($_POST['reg_search'])) {
 	// create the search query using the fields from above (empty if not provided by user)
 	$query = "SELECT *
 						FROM Sample
-						WHERE ( IF(LENGTH('$samplename') > 0, Name LIKE '%$samplename%' , 0)
+						WHERE idStorage IN ($where_in)
+						AND ( IF(LENGTH('$samplename') > 0, Name LIKE '%$samplename%' , 0)
 				    OR IF(LENGTH('$celltype') 	> 0, Cell_type LIKE '%$celltype%', 0)
 						OR IF(LENGTH('$idStorage') 	> 0, idStorage = '$idStorage' , 0)
 				    OR IF(LENGTH('$frozendate') > 0, Frozendate LIKE '%$frozendate%' , 0)
@@ -115,6 +132,7 @@ if ($results->num_rows > 0) {
 		$table .=	"<td class='text-center'> <form action='delete.php' method='post'>
 										<button name=delete_entry class='btn btn-danger'> <img src='img/trash.svg'> </button>
 										<input type='hidden' name='idSample' value="; echo $row["idSample"]; "/>
+
 		            </form>
 		          </td>";
 		$table .= "</tr>";
@@ -138,6 +156,7 @@ $table .= "</ol>";
 <!DOCTYPE html>
 <html>
 <head>
+
 
 </head>
 <body>
