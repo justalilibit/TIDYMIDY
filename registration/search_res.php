@@ -1,22 +1,39 @@
 <?php
 include('server.php');
-print("<br><br>");
+
+print("<br><br><br>");
+
 // COMMENT LILI: 	there are 2 ways to end up here:
 // 											a. over simple keyword search from Index
 //											b. over Advanced Search
 // 								The following if statement will process the $_POST variables accordingly
 // 								The query search and the result presentation is the same for both cases.
 
+# LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
+$ls_idStorages = array(); // array holding the storageIDs of our current user
+$query_storageids = "SELECT * FROM User_has_Storage
+                      WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+                      ";
+$resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
+
+while ($foundID = $resStorIDs->fetch_assoc()) {
+  $idStorage = $foundID['Storage_idStorage'];
+  array_push($ls_idStorages, $idStorage);
+#  print("Your User is connected to Freezers with ID: "); print($idStorage);
+}
+// CREATE ARRAY FOR SEARCH QUERY
+$where_in = implode(',', $ls_idStorages);
+
 // SIMPLE SEARCH with KEYWORD from INDEX PAGE ----------------------------------
 if (isset($_POST['simple_search'])) {
 	$searchword = mysqli_real_escape_string($db, $_POST['keyword']); //keyword by user
 	// create search query with keyword
-
 	$query = "SELECT *
 						FROM Sample
-						WHERE ( IF (LENGTH ('$searchword') > 0, Name LIKE '%$searchword%', 0))
+						WHERE idStorage IN ($where_in)
+						AND ( IF (LENGTH ('$searchword') > 0, Name LIKE '%$searchword%', 0))
+						OR IF(LENGTH('$celltype') 	> 0, Cell_type LIKE '%$celltype%', 0)
 						'";
-
 
 } // ADVANCED SEARCH -------------------------------------------------------------
 elseif (isset($_POST['reg_search'])) {
@@ -30,7 +47,8 @@ elseif (isset($_POST['reg_search'])) {
 	// create the search query using the fields from above (empty if not provided by user)
 	$query = "SELECT *
 						FROM Sample
-						WHERE ( IF(LENGTH('$samplename') > 0, Name LIKE '%$samplename%' , 0)
+						WHERE idStorage IN ($where_in)
+						AND ( IF(LENGTH('$samplename') > 0, Name LIKE '%$samplename%' , 0)
 				    OR IF(LENGTH('$celltype') 	> 0, Cell_type LIKE '%$celltype%', 0)
 						OR IF(LENGTH('$idStorage') 	> 0, idStorage = '$idStorage' , 0)
 				    OR IF(LENGTH('$frozendate') > 0, Frozendate LIKE '%$frozendate%' , 0)
@@ -109,8 +127,10 @@ if ($results->num_rows > 0) {
 		$table .= "<td>" . $idOwner . "</td>";
 		$table .= "<td>" . $row["Comment"] . 	"</td>";
 		$table .=	"<td> <form action='delete.php' method='post'>
-										<button name=delete_entry type submit>Delete</button>
-										<input type='hidden' name='idSample' value="; echo $row["idSample"]; "/>
+											<div>
+									    <button name = delete_entry type='submit'>Delete</button>
+									  </div>
+										<input type='hidden' name='idSample' value=".$row['idSample']." />
 		            </form>
 		          </td>";
 		$table .= "</tr>";
@@ -134,6 +154,7 @@ $table .= "</ol>";
 <!DOCTYPE html>
 <html>
 <head>
+
 
 </head>
 <body>
@@ -159,27 +180,27 @@ $table .= "</ol>";
 			</div>
 			<br>
 			<br>
-			<!-- BUTTONS -->
-			<form action="/search.php" method="post">
-				<div class="input-group">
-					<div class="container">
-				  		<div class="row">
-							<div class="col-12 col-md-2">
-								<button type="submit" class="btn btn-success" name"newsearch" id="newsearch" href="search.php">New Search <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-							   	   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-							   	 </svg></button>
-							</div>
-							<div class="col-12 col-md-1">
-								<button type="submit" class="btn btn-info" name"home" id="home" formacion="/index.php">Go Home <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
-						          <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
-						        </svg></button>
-							</div>
-						</div>
-					</div>
-
-			</form>
-	</div>
-
+      <!-- BUTTONS -->
+      			<form action="search.php" method="post">
+      				<div class="input-group">
+      					<div class="container">
+      				  		<div class="row">
+      							<div class="col-12 col-md-2">
+      								<button type="submit" class="btn btn-success" name="newsearch" id="newrequest">New Search <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+      							   	   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+      							   	 </svg></button>
+      							</div>
+                  </form>
+                  <form action="index.php" method="post">
+      							<div class="col-12 col-md-1">
+      								<button type="submit" class="btn btn-info" name="home" id="home">Go Home <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
+      						          <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
+      						        </svg></button>
+      							</div>
+                      </form>
+      						</div>
+      					</div>
+      	</div>
 
 <br>
 <br>

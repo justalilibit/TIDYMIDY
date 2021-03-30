@@ -17,10 +17,17 @@ if (isset($_POST['reg_info'])) {
   // by adding (array_push()) corresponding error unto $errors array
   if (empty($Full_name)) {
       $errors_registration['fullname'] = "Your full name is required";
+  } else {
+      if (!preg_match('/^[a-zA-Z\s]+$/', $Full_name)){ $errors_registration['fullname'] = "Your name cannot contain special characters"; }}
+
+  if (empty($Contact_email)) {$errors_registration['cemail'] = "Email is required";}
+
+  if (empty($Contact_phone)) {
+
+  } else {
+      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them";
+      }
   }
-  else { if (!preg_match('/^[a-zA-Z\s]+$/', $Full_name)){ $errors_registration['fullname'] = "Your name cannot contain special characters"; }}
-  if (empty($Contact_email)) { $errors_registration['cemail'] = "Email is required"; }
-  else { if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them"; }}
 
   // Finally, REGISTER user if there are no errors in the form
   if(array_filter($errors_registration)){
@@ -31,7 +38,8 @@ if (isset($_POST['reg_info'])) {
   	mysqli_query($db, $query) or die(mysqli_error($db));
     $query = "SELECT * FROM User WHERE Username='$username' ";
     $results = mysqli_query($db, $query) or die(mysqli_error($db));
-  	header('location: index.php');
+    $_SESSION['userdata'] = mysqli_fetch_assoc($results);
+  	header('location: login.php');
   }
 }
 
