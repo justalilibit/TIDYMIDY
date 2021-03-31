@@ -12,8 +12,34 @@ while($row = $results->fetch_assoc()) {
 }
 $_SESSION['fullname'] = $Full_name;
 
+$idOwner='';
 
-$idOwner='albertotitissss';
+# LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
+$ls_idStorages = array(); // array holding the storageIDs of our current user
+$query_storageids = "SELECT * FROM User_has_Storage
+                      WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+                      ";
+$resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
+
+while ($foundID = $resStorIDs->fetch_assoc()) {
+  $idStorage = $foundID['Storage_idStorage'];
+  array_push($ls_idStorages, $idStorage);
+#  print("Your User is connected to Freezers with ID: "); print($idStorage);
+}
+
+# LOAD LABGROUPIDs CONNECTED TO CURRENT USER -----------------------------------#
+$ls_idLabgroup = array(); // array holding the requestIDs of our current user
+$query_labgroupids = "SELECT * FROM User_has_Labgroup
+                      WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+                        ";
+
+$resResIDs = mysqli_query($db,$query_labgroupids) or die(mysqli_error($db));
+
+while ($foundID = $resResIDs->fetch_assoc()) {
+ $idLabgroup= $foundID['Labgroup_idLabgroup'];
+  array_push($ls_idLabgroup, $idLabgroup);
+}
+
 
 // if(isset($_POST['submit'])){
 //         $ptofile_pic= $_FILES['file'];
@@ -106,12 +132,30 @@ $idOwner='albertotitissss';
         <div class="work-experience">
             <h1 class="heading"> MY STUFF</h1>
             <div class="info">
-                <p class="sub-heading">My storages</p>
-                <p>dsfcgv</p>
+                <p class="sub-heading">My Lab Groups</p>
+                <ul name='idLabgroup'>
+                  <?php
+                  foreach($ls_idLabgroup as $idLabgroup) {
+                    $labgroup_sql = "SELECT * FROM Labgroup WHERE idLabgroup = '$idLabgroup'";
+                    $res_labgroup =mysqli_query($db, $labgroup_sql) or die(mysqli_error($db));
+                      while ($labgroupEntry = $res_labgroup->fetch_assoc()){
+                        ?><li value='<?php echo $labgroupEntry['idLabgroup']; ?>'><?php echo $labgroupEntry['Labgroupname']; ?></li><?php
+                      }
+                  }?>
+                </ul>
             </div>
             <div class="info">
-                <p class="sub-heading">My lab groups</p>
-                <p>asdsf</p>
+                <p class="sub-heading">My Storages</p>
+                  <ul id="idStorage">
+                  <?php
+                  foreach($ls_idStorages as $idStorage) {
+                    $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";
+                    $res_storage =mysqli_query($db, $storage_sql) or die(mysqli_error($db));
+                      while ($storageEntry = $res_storage->fetch_assoc()){
+                        ?><li value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></li><?php
+                      }
+                  }?>
+                  </ul>
             </div>
             <div class="info">
                 <p class="sub-heading">My tubes</p>
