@@ -12,7 +12,6 @@ while($row = $results->fetch_assoc()) {
 }
 $_SESSION['fullname'] = $Full_name;
 
-$idOwner='';
 
 # LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
 $ls_idStorages = array(); // array holding the storageIDs of our current user
