@@ -1,6 +1,6 @@
 <?php
 include('server.php');
-#print("<br><br><br>");
+print("<br><br><br>");
 
 // COMMENT LILI: 	there are 2 ways to end up here:
 // 											a. over simple keyword search from Index
@@ -18,9 +18,8 @@ $resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
 while ($foundID = $resStorIDs->fetch_assoc()) {
   $idStorage = $foundID['Storage_idStorage'];
   array_push($ls_idStorages, $idStorage);
-#  print("Your User is connected to Freezers with ID: "); print($idStorage);
 }
-// CREATE ARRAY FOR SEARCH QUERY
+# CREATE ARRAY FOR SEARCH QUERY
 $where_in = implode(',', $ls_idStorages);
 
 // SIMPLE SEARCH with KEYWORD from INDEX PAGE ----------------------------------
@@ -28,11 +27,12 @@ if (isset($_POST['simple_search'])) {
 	$searchword = mysqli_real_escape_string($db, $_POST['keyword']); //keyword by user
 	// create search query with keyword
 	$query = "SELECT *
-						FROM Sample
-						WHERE idStorage IN ($where_in)
-						AND ( IF (LENGTH ('$searchword') > 0, Name LIKE '%$searchword%', 0))
-						OR IF(LENGTH('$celltype') 	> 0, Cell_type LIKE '%$celltype%', 0)
-						'";
+            FROM Sample
+            WHERE idStorage IN ($where_in)
+            AND ( IF(LENGTH('$searchword') > 0, Name LIKE '%$searchword%', 0)
+            OR IF (LENGTH ('$searchword') > 0, Cell_type LIKE '%$searchword%',0)
+          )";
+  print($query);
 
 } // ADVANCED SEARCH -------------------------------------------------------------
 elseif (isset($_POST['reg_search'])) {
@@ -55,14 +55,16 @@ elseif (isset($_POST['reg_search'])) {
 					)";
 
 
-} // USER ENTRIES -------------------------------------------------------------
+} // USER ENTRIES -------------------------------------------------------------#
 elseif (isset($_POST['my_entries'])) {
 	$idUser = $_SESSION["userdata"]["idUser"];
 
 	$query = "SELECT *
 						FROM Sample
 						WHERE idUser = '$idUser' ";
-} else {
+
+
+}  else {
 	echo "Something went wrong! Please try again";
 };
 
@@ -114,7 +116,7 @@ if ($results->num_rows > 0) {
 		$queryOwner = "SELECT * FROM User WHERE idUser = $idOwner";
 		$resultsOwner = mysqli_query($db, $queryOwner) or die(mysqli_error($db));
 		while($Owner = $resultsOwner->fetch_assoc()){
-			$idOwner = $Owner["Username"];
+			$OwnerName = $Owner["Username"];   # LILI: changed idOwner here to OwnerName
 		}
 
 		$table .= "<tr class='item'>";
@@ -126,8 +128,11 @@ if ($results->num_rows > 0) {
 		$table .= "<td class='text-center'>" . $row["Frozendate"] . "</td>";
 		$table .= "<td class='text-center'>" . $row["Amount"] . "</td>";
 		$table .= "<td class='text-center'>" . $row["Availability"] . "</td>";
-		// <a style="color:blue" href="profile_others.php"> $idOwner </a>
-		$table .= "<td class='text-center'> <a href='profile_others.php'>" . $idOwner . "</a> </td>";
+		// <a style="color:blue" href="profile_others.php"> $OwnerName </a>
+		$table .= "<td class='text-center'> <a href='profile_others.php?id= " .  $idOwner . "'>" . $OwnerName . "</a> </td>";
+    // $table .= "<td class='text-center>
+    //             <a href='profile_others.php?id= "; echo $idOwner; "' > "; echo $OwnerName ; " </a>
+    //           </td>";
 		$table .= "<td class='text-center'>" . $row["Comment"] . 	"</td>";
 		$table .=	"<td class='text-center'> <form action='delete.php' method='post'>
 										<button name=delete_entry class='btn btn-danger'> <img src='img/trash.svg'> </button>
@@ -174,6 +179,7 @@ $table .= "</ol>";
 				<h4>Entries matching your Search: <?= mysqli_num_rows($results) ?></h4>
 
 				<p>Sort Entries by clicking Header</p>
+        <a href="profile_others.php?id="NEW ID" " >Edit</a>
 			</div>
 			<!-- RESULT TABLE -->
 			<div>
