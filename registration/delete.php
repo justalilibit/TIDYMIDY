@@ -2,7 +2,9 @@
 include('server.php');
 
 // DELETE AN ENTRY
+
 # print("<br><br><br><br>");
+
 
 if(isset($_POST['delete_entry'])){
   if  (isset($_POST['idSample'])) {

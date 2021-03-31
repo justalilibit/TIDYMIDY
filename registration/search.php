@@ -65,22 +65,22 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
 									 value="<?php echo $celltype; ?>"
 									 >
 							</div>
-					 </div>
+                            <br>
+                     <div class="col-sm-3 d-sm-flex align-items-center">
+                         <label class="m-sm-0">Availability</label>
+                         <select name="availability" class="custom-select"
+                             <option selected>Private</option>
+                             <option value="Private">Private</option>
+                             <option value="Ask me first">Ask me first</option>
+                             <option value="Public">Public</option>
+                           </select>
+                     </div>
+                 </div>
 
-					 <div class="col-sm-3 d-sm-flex align-items-center">
-							 <label class="m-sm-0">Owner</label>
-							 <select class="custom-select"
-								 <option selected>Private</option>
-								 <option value="Private">Privat</option>
-								 <option value="Ask me first">Ask me first</option>
-								 <option value="Public">Public</option>
-							   </select>
-					 </div>
-			 </div>
 
 			 <div class="row">
 					 <div class="col-sm-3 d-sm-flex align-items-center">
-						   <label class="m-sm-0">Position</label>
+						   <label class="m-sm-0">Where it was?</label>
 						   <input
 							 type="text"
 							 name="position"
@@ -101,6 +101,9 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
 							 value="<?php echo $frozendate;?>"
 							 >
 					 </div>
+
+                 </div>
+
 
 					 <div class="input-group">
 							 <br>

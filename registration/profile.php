@@ -1,4 +1,9 @@
 <?php include('server.php');
+
+
+
+
+
 $query = "SELECT * FROM User WHERE Username='".$_SESSION["username"]."' ";
 $results = mysqli_query($db, $query) or die(mystringsqli_error($db));
 while($row = $results->fetch_assoc()) {
@@ -38,8 +43,6 @@ while ($foundID = $resResIDs->fetch_assoc()) {
  $idLabgroup= $foundID['Labgroup_idLabgroup'];
   array_push($ls_idLabgroup, $idLabgroup);
 }
-
-
 // if(isset($_POST['submit'])){
 //         $ptofile_pic= $_FILES['file'];
 //
@@ -87,75 +90,78 @@ while ($foundID = $resResIDs->fetch_assoc()) {
     <div class="sidebar">
         <div class="sidebar-top">
             <img class="profile-image" src="img/default_profile_pic.jpg" />
-            <div style=" background-color: rgba(46, 49, 49, 0.5);" class="profile-basic">
-                <h1 class="name"><?php echo $Full_name; ?></h1>
-                <h4 class="designation"> <?php echo $Position; ?></h4>
+            <div class="profile-basic">
+                <h1 class=" text-center"><?php echo $_SESSION["userdata"]["Full_name"]; ?></h1>
+                <h4 class="text-center"> <?php echo $_SESSION["userdata"]["Position"]; ?></h4>
             </div>
         </div>
         <div class="profile-info">
             <p class="key"> Main task: </p>
-            <p class="value"><?php echo $Main_task; ?></p>
+            <p class="value"><?php echo $_SESSION["userdata"]["Main_task"]; ?></p>
         </div>
         <div class="profile-info">
             <p class="key">Contact phone : </p>
-            <p class="value"><?php echo $Contact_phone; ?></p>
+            <p class="value"><?php echo $_SESSION["userdata"]["Contact_phone"]; ?></p>
         </div>
 
         <div class="profile-info">
             <p class="key" >Contact email : </p>
-            <p class="value" ><?php echo $Contact_email; ?></p>
+            <p class="value" ><?php echo $_SESSION["userdata"]["Contact_email"]; ?></p>
         </div>
 
         <div class="profile-info">
             <p class="key" >Usually you can find me... </p>
-            <p class="text-left"><?php echo wordwrap($Find_me, 35, "<br>"); ?>
+            <p class="text-left"><?php echo wordwrap( $_SESSION["userdata"]["Find_me"], 35, "<br>"); ?>
             </p>
         </div>
 
         <div class="profile-info">
             <p class="key" >Institution / Research group: <br> </p>
-            <p class="value" > <?php echo $Institute; ?><br/>
+            <p class="value" > <?php echo $_SESSION["userdata"]["Institute"]; ?><br/>
             </p>
         </div>
         <div class="profile-info">
-            <p class="key" >Change profile picture: </p>
-        <form class="text-left" action="upload.php" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" value="Post">
-            <button class="btn btn-success text-center" type="submit" name="submit">UPLOAD</button>
+            <p class="key" >Edit contact information: </p>
+            <div class="text-center">
+                <a href="profile_edit.php"> <button class="btn btn-warning" type="submit" name="submit"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                  <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                </svg></button></a>
+            </div>
         </form>
     </div>
 
     </div>
 
     <div class="content">
-        <div class="work-experience">
-            <h1 class="heading"> MY STUFF</h1>
-            <div class="info">
-                <p class="sub-heading">My Lab Groups</p>
-                <ul name='idLabgroup'>
-                  <?php
-                  foreach($ls_idLabgroup as $idLabgroup) {
-                    $labgroup_sql = "SELECT * FROM Labgroup WHERE idLabgroup = '$idLabgroup'";
-                    $res_labgroup =mysqli_query($db, $labgroup_sql) or die(mysqli_error($db));
-                      while ($labgroupEntry = $res_labgroup->fetch_assoc()){
-                        ?><li value='<?php echo $labgroupEntry['idLabgroup']; ?>'><?php echo $labgroupEntry['Labgroupname']; ?></li><?php
-                      }
-                  }?>
-                </ul>
-            </div>
-            <div class="info">
-                <p class="sub-heading">My Storages</p>
-                  <ul id="idStorage">
-                  <?php
-                  foreach($ls_idStorages as $idStorage) {
-                    $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";
-                    $res_storage =mysqli_query($db, $storage_sql) or die(mysqli_error($db));
-                      while ($storageEntry = $res_storage->fetch_assoc()){
-                        ?><li value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></li><?php
-                      }
-                  }?>
-                  </ul>
-            </div>
+    <div class="work-experience">
+        <h1 class="heading"> MY STUFF</h1>
+        <div class="info">
+            <p class="sub-heading">My Lab Groups</p>
+            <ul name='idLabgroup'>
+              <?php
+              foreach($ls_idLabgroup as $idLabgroup) {
+                $labgroup_sql = "SELECT * FROM Labgroup WHERE idLabgroup = '$idLabgroup'";
+                $res_labgroup =mysqli_query($db, $labgroup_sql) or die(mysqli_error($db));
+                  while ($labgroupEntry = $res_labgroup->fetch_assoc()){
+                    ?><li value='<?php echo $labgroupEntry['idLabgroup']; ?>'><?php echo $labgroupEntry['Labgroupname']; ?></li><?php
+                  }
+              }?>
+            </ul>
+        </div>
+        <div class="info">
+            <p class="sub-heading">My Storages</p>
+              <ul id="idStorage">
+              <?php
+              foreach($ls_idStorages as $idStorage) {
+                $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";
+                $res_storage =mysqli_query($db, $storage_sql) or die(mysqli_error($db));
+                  while ($storageEntry = $res_storage->fetch_assoc()){
+                    ?><li value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></li><?php
+                  }
+              }?>
+              </ul>
+        </div>
+
             <div class="info">
                 <p class="sub-heading">My tubes</p>
                 <form class="form-inline" method="post" action="search_res.php">
@@ -182,6 +188,12 @@ while ($foundID = $resResIDs->fetch_assoc()) {
 
 
 <style media="screen">
+
+    .profile-basic{
+        background-color: rgba(46, 49, 49, 0.5);
+        width: 100%;
+        margin-left: -50px;
+    }
 
     .sidebar {
         width:30%;

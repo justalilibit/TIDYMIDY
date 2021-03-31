@@ -131,6 +131,37 @@ while ($foundID = $resResIDs->fetch_assoc()) {
     </div>
 
     <div class="content">
+
+
+            <div class="content">
+                <div class="work-experience">
+                    <h1 class="heading"> MY STUFF</h1>
+                    <div class="info">
+                        <p class="sub-heading">My Lab Groups</p>
+                        <ul name='idLabgroup'>
+                          <?php
+                          foreach($ls_idLabgroup as $idLabgroup) {
+                            $labgroup_sql = "SELECT * FROM Labgroup WHERE idLabgroup = '$idLabgroup'";
+                            $res_labgroup =mysqli_query($db, $labgroup_sql) or die(mysqli_error($db));
+                              while ($labgroupEntry = $res_labgroup->fetch_assoc()){
+                                ?><li value='<?php echo $labgroupEntry['idLabgroup']; ?>'><?php echo $labgroupEntry['Labgroupname']; ?></li><?php
+                              }
+                          }?>
+                        </ul>
+                    </div>
+                    <div class="info">
+                        <p class="sub-heading">My Storages</p>
+                          <ul id="idStorage">
+                          <?php
+                          foreach($ls_idStorages as $idStorage) {
+                            $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";
+                            $res_storage =mysqli_query($db, $storage_sql) or die(mysqli_error($db));
+                              while ($storageEntry = $res_storage->fetch_assoc()){
+                                ?><li value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></li><?php
+                              }
+                          }?>
+                          </ul>
+                    </div>
         <div class="work-experience">
             <h1 class="heading"> MY STUFF</h1>
             <div class="info">
