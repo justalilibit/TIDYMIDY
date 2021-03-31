@@ -14,11 +14,16 @@ $resResIDs = mysqli_query($db,$query_labgroupids) or die(mysqli_error($db));
 while ($foundID = $resResIDs->fetch_assoc()) {
  $idLabgroup= $foundID['Labgroup_idLabgroup'];
   array_push($ls_idLabgroup, $idLabgroup);
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
 }
 # CREATE A NEW STORAGE ENTRY --------------------------------------------------#
 if (isset($_POST['reg_labgroup'])) {
   $create_labgroupname = mysqli_real_escape_string($db, $_POST['createLabgroupname']);
+<<<<<<< HEAD
 
   if (empty($create_labgroupname)) {
     array_push($errors, "Unable to add Labgroup. Name is required");}
@@ -106,6 +111,95 @@ function alreadyconnected($db, $idLabgroup) {
    if ($alreadyexists) {
      if ($alreadyexists->num_rows === 0){ // User and labgroup not yet connected
        // connecting User and labgroup
+=======
+
+  if (empty($create_labgroupname)) {
+    array_push($errors, "Unable to add Labgroup. Name is required");}
+
+  if (count($errors) == 0) {
+    // CHECK  IF STORAGE ENTRY ALREADY EXISTS
+    $res_findLabgroup = labgroupexists($db, $create_labgroupname);
+
+    if ($res_findLabgroup) {
+      if ($res_findLabgroup->num_rows === 0){ // no freezer with this name exists yet
+        // CREATE NEW STORAGE
+        $queryNewLabgroup = "INSERT INTO Labgroup (Labgroupname)
+                  VALUES ('$create_labgroupname')";
+        mysqli_query($db, $queryNewLabgroup) or die(mysqli_error($db));
+
+        // CHECK THAT ENTRY WAS MADE
+        $res_LabgroupMade = labgroupexists($db, $create_labgroupname);
+        if ($res_LabgroupMade) {
+          if ($res_LabgroupMade->num_rows === 0){ // Storagename is not in db ;
+            array_push($errors, "No Lab group was created. An unexpected Error occured. Please try again.");;
+          } else { // Storagename is in db ;
+            // CONNECT U and S
+            connectUserLabgroup($db, $res_LabgroupMade);
+          }
+        }
+      } else {
+        array_push($errors, "A Lab Group with this name already exists. Click 'Add existing Lab Group' or choose different name");
+      }
+    }
+  }
+} # end reg_storage
+# END: NEW STORAGE ENTRY ------------------------------------------------------#
+
+
+# ADD AN EXISTING STORAGE ENTRY -----------------------------------------------#
+if (isset($_POST['add_labgroup'])) {
+  $add_labgroupname = mysqli_real_escape_string($db, $_POST['addLabgroupname']);
+
+  if (empty($add_labgroupname)) {
+    array_push($errors, "Unable to add existing Lab group. Name is required");}
+
+  if (count($errors) == 0) {
+      // MAKE SURE THAT ENTRY EXISTS
+      $resLabExis = labgroupexists($db, $add_labgroupname);
+
+      if ($resLabExis) {
+        if ($resLabExis->num_rows === 0){ // Storagename is not in db yet;
+          array_push($errors, "This Lab Group is not yet registered in the System. Make a new entry using 'Create New Lab Group'");;
+        } else {
+          connectUserLabgroup($db, $resLabExis);
+        }
+      }
+  }
+}
+# END ADD AN EXISTING STORAGE ENTRY -------------------------------------------#
+
+# FUNCTION to check if Storagename already exists -----------------------------#
+function Labgroupexists($db, $labgroupname) {
+  // function to see if Storagename already exists. returns result object or
+  $query = "SELECT * FROM Labgroup
+                    WHERE Labgroupname = '$labgroupname'";
+  $result = mysqli_query($db, $query) or die(mysqli_error($db));
+  return $result;
+}
+
+# FUNCTION to check if User already connected to Storage ----------------------#
+function alreadyconnected($db, $idLabgroup) {
+  $query = "SELECT * FROM User_has_Labgroup
+            WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+            AND Labgroup_idLabgroup = '$idLabgroup'
+            ";
+            // print($query);
+  $result = mysqli_query($db, $query) or die(mysqli_error($db));
+  return $result;
+}
+
+# FUNCTION connecting current User to Storage that fits the prerun query ------#
+ function connectUserLabgroup($db, $res_foundLab) {
+   $idLabgroup ="";
+   while($labgroup = $res_foundLab->fetch_assoc()){
+     $idLabgroup = $labgroup["idLabgroup"];
+   }
+   $alreadyexists = alreadyconnected($db, $idLabgroup);
+
+   if ($alreadyexists) {
+     if ($alreadyexists->num_rows === 0){ // User and Storage not yet connected
+       // connecting User and Storage
+>>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
        $queryConnectU_L = "INSERT INTO User_has_Labgroup (User_idUser, Labgroup_idLabgroup)
                  VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idLabgroup')";
        mysqli_query($db, $queryConnectU_L) or die(mysqli_error($db));
@@ -233,7 +327,11 @@ if (isset($_POST['reg_request'])) {
                           </div>
                           <div class="input-group">
                               <br>
+<<<<<<< HEAD
                               <!-- DISPLAY CONNECTED labgroupS -->
+=======
+                              <!-- DISPLAY CONNECTED STORAGES -->
+>>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
                               <div class="input-group">
                                 <label for="idLabgroup">Labgroup:</label>
                                 <select name='idLabgroup'>
@@ -269,7 +367,11 @@ if (isset($_POST['reg_request'])) {
 
                     <!--- ADD_BUTTON: THIS IS ADDING AN EXISTING ALREADY THERE LABGROUP --------------------------------------------------------------------------------------------------------------------->
 
+<<<<<<< HEAD
                                                 <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal">Add EXISTING Labgroup
+=======
+                                                <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal">Add EXISTING Storage
+>>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16">
                                                   <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
                                                 </svg></button>
@@ -309,7 +411,11 @@ if (isset($_POST['reg_request'])) {
                                                               <label>Labgroup name: </label>
                                                               <input type="text" placeholder='New Labgroup Name' name="createLabgroupname" value="<?php echo $create_labgroupname; ?>">
 
+<<<<<<< HEAD
                                                               <button type="submit" class="btn btn-success" name="reg_labgroup">Create new Labgroup</button>
+=======
+                                                              <button type="submit" class="btn btn-success" name="reg_labgroup">Create new storage</button>
+>>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
 
                     					              </div>
                     					            </div>

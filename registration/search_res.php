@@ -1,6 +1,9 @@
 <?php
 include('server.php');
+<<<<<<< HEAD
 #print("<br><br><br>");
+=======
+>>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
 
 // COMMENT LILI: 	there are 2 ways to end up here:
 // 											a. over simple keyword search from Index
@@ -31,7 +34,10 @@ if (isset($_POST['simple_search'])) {
 						FROM Sample
 						WHERE idStorage IN ($where_in)
 						AND ( IF (LENGTH ('$searchword') > 0, Name LIKE '%$searchword%', 0))
+<<<<<<< HEAD
 						OR IF(LENGTH('$celltype') 	> 0, Cell_type LIKE '%$celltype%', 0)
+=======
+>>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
 						'";
 
 } // ADVANCED SEARCH -------------------------------------------------------------
@@ -157,6 +163,7 @@ if ($results->num_rows > 0) {
 		$table .=	"<td class='text-center'> <form action='delete.php' method='post'>
 										<button name=delete_entry class='btn btn-danger'> <img src='img/trash.svg'> </button>
 										<input type='hidden' name='idSample' value="; echo $row["idSample"]; "/>
+
 		            </form>
 		          </td>";
 		$table .= "</tr>";
