@@ -1,6 +1,16 @@
 <?php
 include('server.php');
-print("<br><br><br>");
+# print("<br><br><br>");
+
+$query = "UPDATE User
+          SET Full_name='$Full_name',
+          Position='$Position',
+          Main_task='$Main_task',
+          Institute='$Institute',
+          Contact_email='$Contact_email',
+          Contact_phone= '$Contact_phone',
+          Find_me='$Find_me'
+          WHERE Username='".$_SESSION["username"]."'";
 
 // COMMENT LILI: 	there are 2 ways to end up here:
 // 											a. over simple keyword search from Index
@@ -32,7 +42,6 @@ if (isset($_POST['simple_search'])) {
             AND ( IF(LENGTH('$searchword') > 0, Name LIKE '%$searchword%', 0)
             OR IF (LENGTH ('$searchword') > 0, Cell_type LIKE '%$searchword%',0)
           )";
-  print($query);
 
 } // ADVANCED SEARCH -------------------------------------------------------------
 elseif (isset($_POST['reg_search'])) {
@@ -146,15 +155,6 @@ if ($results->num_rows > 0) {
 }
 $table .= "</ol>";
 
-// // DELETE AN ENTRY
-// if (isset($_POST['delete_entry'])) {
-// 	$queryDelete = "DELETE FROM Sample WHERE idSample = $idSample"
-// 	$
-// }
-//
-// 	//Define the query
-// 	$query = "DELETE FROM Sample WHERE idSample={$_POST['idSample']}";
-
 
 ?>
 <!DOCTYPE html>
@@ -179,7 +179,6 @@ $table .= "</ol>";
 				<h4>Entries matching your Search: <?= mysqli_num_rows($results) ?></h4>
 
 				<p>Sort Entries by clicking Header</p>
-        <a href="profile_others.php?id="NEW ID" " >Edit</a>
 			</div>
 			<!-- RESULT TABLE -->
 			<div>
