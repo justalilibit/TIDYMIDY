@@ -23,6 +23,7 @@ $errors_entry = array('samplename' => '', 'position' => '', 'amount' => '', 'fro
 
 
 
+
 // NEW SEARCH
 
 //if (isset($_POST['reg_search']))

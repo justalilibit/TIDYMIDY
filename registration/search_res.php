@@ -86,7 +86,7 @@ $results = mysqli_query($db, $query) or die(mysqli_error($db));
 // GENERATE RESULT TABLE AND STORE IN '$table'
 # When a header is clicked, run the sortTable function, with a parameter, 0 for sorting by names, 1 for sorting by Storage
 if ($results->num_rows > 0) {
-	echo "<table border='1' cellspacing='5' cellpadding='4' id='resultTable' style='width:80%'>
+	echo "<table border='1' cellspacing='5' cellpadding='4' id='resultTable' style='width:100%' class=''>
 					<thead>
 						<tr class='text-center'>
 
@@ -171,12 +171,11 @@ if ($results->num_rows > 0) {
     //             <a href='profile_others.php?id= "; echo $idOwner; "' > "; echo $OwnerName ; " </a>
     //           </td>";
 		$table .= "<td class='text-center'>" . $row["Comment"] . 	"</td>";
-		$table .=	"<td class='text-center'> <form action='delete.php' method='post'>
-										<button name=delete_entry class='btn btn-danger'> <img src='img/trash.svg'> </button>
-										<input type='hidden' name='idSample' value="; echo $row["idSample"]; "/>
-
-		            </form>
-		          </td>";
+        $table .=	"<td class='text-center'> <form action='delete.php' method='post'>
+                    <button input='submit' name='delete_entry' class='btn btn-danger'> <img src='img/trash.svg'> </button>
+                    <input type='hidden' name='idSample' value=".$row['idSample']." />
+                </form>
+              </td>";
 		$table .= "</tr>";
 	}
 	$table .= "</tbody> </table>";
@@ -197,17 +196,18 @@ $table .= "</ol>";
 
 	<div class="hero">
     <div class="jumbotron text-center" style="margin-bottom: 0px;">
-         <h1>Search Results</h1>
+         <h1>Search Results <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-eyeglasses" viewBox="0 0 16 16">
+  <path d="M4 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm2.625.547a3 3 0 0 0-5.584.953H.5a.5.5 0 0 0 0 1h.541A3 3 0 0 0 7 8a1 1 0 0 1 2 0 3 3 0 0 0 5.959.5h.541a.5.5 0 0 0 0-1h-.541a3 3 0 0 0-5.584-.953A1.993 1.993 0 0 0 8 6c-.532 0-1.016.208-1.375.547zM14 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+</svg></h1>
          <p>Look what we found for you!</p>
 		</div>
 	</div>
 
 	<div class="container">
-			<h2>Search Results</h2>
 			<div class="content">
 				<h4>Entries matching your Search: <?= mysqli_num_rows($results) ?></h4>
 
-				<p>Sort Entries by clicking Header</p>
+				<p>Sort entries by clicking Header</p>
 			</div>
 			<!-- RESULT TABLE -->
 			<div>
