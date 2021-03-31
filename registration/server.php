@@ -136,6 +136,7 @@ function alreadyconnected($db, $idLabgroup) {
 #-----------------------------------------------------------------------------#
 
 
+
 // NEW SEARCH
 
 //if (isset($_POST['reg_search']))

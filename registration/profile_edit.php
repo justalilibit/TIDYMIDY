@@ -1,88 +1,7 @@
 <?php
 include('server.php');
 
-// REGISTER USER
-if (isset($_POST['edit_info'])) {
-  // receive all input values from the form
-  $Full_name = mysqli_real_escape_string($db, $_POST['fullname']);
-  $Position = mysqli_real_escape_string($db, $_POST['position']);
-  $Main_task = mysqli_real_escape_string($db, $_POST['maintask']);
-  $Contact_email = mysqli_real_escape_string($db, $_POST['cemail']);
-  $Contact_phone = mysqli_real_escape_string($db, $_POST['cphone']);
-  $Institute = mysqli_real_escape_string($db, $_POST['institute']);
-  $Find_me = mysqli_real_escape_string($db, $_POST['findme']);
 
-
-  // form validation: ensure that the form is correctly filled ...
-  // by adding (array_push()) corresponding error unto $errors array
-  if (empty($Full_name)) {
-      $errors_registration['fullname'] = "Your full name is required";
-  } else {
-      if (!preg_match('/^[a-zA-Z\s]+$/', $Full_name)){ $errors_registration['fullname'] = "Your name cannot contain special characters"; }}
-
-  if (empty($Contact_email)) {$errors_registration['cemail'] = "Email is required";}
-
-  if (empty($Contact_phone)) {
-
-  } else {
-      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them";
-      }
-  }
-
-
-  if (empty($Contact_phone)) {
-
-  } else {
-      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them"; }}
-
-
-  if (empty($Contact_phone)) {
-
-  } else {
-      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them"; }}
-
-  if(array_filter($errors_registration)){
-
-  } else {
-  	$query = "UPDATE User
-              SET Full_name='$Full_name',
-              Position='$Position',
-              Main_task='$Main_task',
-              Institute='$Institute',
-              Contact_email='$Contact_email',
-              Contact_phone='$Contact_phone',
-              Find_me='$Find_me'
-              WHERE idUser='".$_SESSION["userdata"]["idUser"]."'";
-
-    print("<br><br><br>THIS IS THE QUERY:<br>"); print($query);
-
-
-  	mysqli_query($db, $query) or die(mysqli_error($db));
-    $query = "SELECT * FROM User WHERE Username='".$_SESSION["userdata"]["idUser"]."'";
-    $results = mysqli_query($db, $query) or die(mysqli_error($db));
-    if (mysqli_num_rows($results) == 1) {
-      $_SESSION['userdata'] = mysqli_fetch_assoc($results);
-  	  header('location: profile.php');
-  }
-}
-}  if (empty($Contact_phone)) {
-
-  } else {
-      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them"; }}
-
-  if(array_filter($errors_registration)){
-
-  } else {
-  	$query = "UPDATE User SET Full_name='$Full_name', Position='$Position', Main_task='$Main_task', Institute='$Institute', Contact_email='$Contact_email', Contact_phone='$Contact_phone', Find_me='$Find_me' WHERE Username='
-".$_SESSION["userdata"]["idUser"]."'";
-  	mysqli_query($db, $query) or die(mysqli_error($db));
-    $query = "SELECT * FROM User WHERE Username='".$_SESSION["userdata"]["idUser"]."'";
-    $results = mysqli_query($db, $query) or die(mysqli_error($db));
-    if (mysqli_num_rows($results) == 1) {
-      $_SESSION['userdata'] = mysqli_fetch_assoc($results);
-  	  header('location: profile.php');
-  }
-}
 ?>
 
 <!DOCTYPE html>
@@ -186,16 +105,34 @@ if (isset($_POST['edit_info'])) {
     </div>
 
     <div class="content">
-        <div class="work-experience">
-            <h1 class="heading"> MY STUFF</h1>
-            <div class="info">
-                <p class="sub-heading">My storages</p>
-                <p>dsfcgv</p>
-            </div>
-            <div class="info">
-                <p class="sub-heading">My lab groups</p>
-                <p>asdsf</p>
-            </div>
+    <div class="work-experience">
+        <h1 class="heading"> MY STUFF</h1>
+        <div class="info">
+            <p class="sub-heading">My Lab Groups</p>
+            <ul name='idLabgroup'>
+              <?php
+              foreach($ls_idLabgroup as $idLabgroup) {
+                $labgroup_sql = "SELECT * FROM Labgroup WHERE idLabgroup = '$idLabgroup'";
+                $res_labgroup =mysqli_query($db, $labgroup_sql) or die(mysqli_error($db));
+                  while ($labgroupEntry = $res_labgroup->fetch_assoc()){
+                    ?><li value='<?php echo $labgroupEntry['idLabgroup']; ?>'><?php echo $labgroupEntry['Labgroupname']; ?></li><?php
+                  }
+              }?>
+            </ul>
+        </div>
+        <div class="info">
+            <p class="sub-heading">My Storages</p>
+              <ul id="idStorage">
+              <?php
+              foreach($ls_idStorages as $idStorage) {
+                $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";
+                $res_storage =mysqli_query($db, $storage_sql) or die(mysqli_error($db));
+                  while ($storageEntry = $res_storage->fetch_assoc()){
+                    ?><li value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></li><?php
+                  }
+              }?>
+              </ul>
+        </div>
             <div class="info">
                 <p class="sub-heading">My tubes</p>
                 <form class="form-inline" method="post" action="search_res.php">

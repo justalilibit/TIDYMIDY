@@ -74,9 +74,7 @@ $table .= "<td>" . $idOwner . "</td>";
 $table .= "<td>" . $labgroupname . "</td>";
 // <a style="color:blue" href="profile_others.php"> $idOwner </a>
 $table .=	"<td> <form action='delete_request.php' method='post'>
-                  <div>
-                  <button name = delete_request type='submit'>Delete</button>
-                </div>
+                <button input='submit' name='delete_request' class='btn btn-danger'> <img src='img/trash.svg'> </button>
                 <input type='hidden' name='idRequest' value=".$row['idRequest']." />
             </form>
           </td>";
