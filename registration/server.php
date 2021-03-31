@@ -10,21 +10,13 @@ $errors = array();
 
 $idSample = $samplename = $celltype = $position = $amount = $frozendate = $availability = $comment = $idOwner = $Location = $Contact_email = $Full_name = $Contact_phone = $Position = $Main_task = $Find_me = $Institute = '';
 $idStorage = $storagename = $location = "";
-<<<<<<< HEAD
+
 $idLabgroup = $requestdate = $create_labgroupname ="";
-=======
-$idLabgroup = $requestdate ="";
->>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
 $create_storagename = $create_location = $add_storagename = "";
 $errors_registration = array('username' => '', 'email' => '', 'password_1' => '', 'password_2' => '', 'fullname' => '', 'cemail' => '', 'cphone' => '');
 $errors_entry = array('samplename' => '', 'position' => '', 'amount' => '', 'frozendate' => '', 'idStorage' => '');
 // connect to the database
  $db = mysqli_connect('localhost', 'albert', '/Puiyuaru1616', 'tidytubes');   # albert pw
-<<<<<<< HEAD
-=======
-
-// $db = mysqli_connect('localhost', 'tidytubes', 'Welcome123%', 'mydb');    # jo & lili pw
->>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
 
  // $db = mysqli_connect('localhost', 'tidytubes', 'Welcome123%', 'tidytubes');    # jo & lili pw
 

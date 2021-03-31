@@ -70,12 +70,13 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
                          <label class="m-sm-0">Availability</label>
                          <select name="availability" class="custom-select"
                              <option selected>Private</option>
-                             <option value="Privat">Private</option>
+                             <option value="Private">Private</option>
                              <option value="Ask me first">Ask me first</option>
                              <option value="Public">Public</option>
                            </select>
                      </div>
                  </div>
+
 
 			 <div class="row">
 					 <div class="col-sm-3 d-sm-flex align-items-center">

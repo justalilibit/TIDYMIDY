@@ -229,7 +229,7 @@ function alreadyconnected($db, $idStorage) {
                                         <br>
                                         <select name="availability" class="custom-select"
                                             <option selected>Private</option>
-                                            <option value="Privat">Private</option>
+                                            <option value="Private">Private</option>
                                             <option value="Ask me first">Ask me first</option>
                                             <option value="Public">Public</option>
                                           </select>
@@ -301,6 +301,7 @@ function alreadyconnected($db, $idStorage) {
                 <div class="input-group">
                     <div class="row">
                         <div class="col-12 col-md-3">
+
                             <button type="submit" onclick="return checkEntry()" class="btn btn-success " name="reg_entry">Add Entry
 
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-plus" viewBox="0 0 16 16">
@@ -331,6 +332,7 @@ function alreadyconnected($db, $idStorage) {
 					                  <input type="text" placeholder='Name of existing Storage' name="addingExistStorage" value="<?php echo $add_storagename; ?>">
                                       <br>
 					                  <button type="submit" class="btn btn-warning" name="adding_storage">Add EXISTING storage</button>
+
 					                </div>
 					              </div>
 					            </div>

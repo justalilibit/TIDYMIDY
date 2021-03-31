@@ -161,6 +161,7 @@ while ($foundID = $resResIDs->fetch_assoc()) {
               }?>
               </ul>
         </div>
+
             <div class="info">
                 <p class="sub-heading">My tubes</p>
                 <form class="form-inline" method="post" action="search_res.php">

@@ -1,9 +1,17 @@
 <?php
 include('server.php');
-<<<<<<< HEAD
+
 #print("<br><br><br>");
-=======
->>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
+
+$query = "UPDATE User
+          SET Full_name='$Full_name',
+          Position='$Position',
+          Main_task='$Main_task',
+          Institute='$Institute',
+          Contact_email='$Contact_email',
+          Contact_phone= '$Contact_phone',
+          Find_me='$Find_me'
+          WHERE Username='".$_SESSION["username"]."'";
 
 // COMMENT LILI: 	there are 2 ways to end up here:
 // 											a. over simple keyword search from Index
@@ -22,23 +30,21 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
   $idStorage = $foundID['Storage_idStorage'];
   array_push($ls_idStorages, $idStorage);
 #  print("Your User is connected to Freezers with ID: "); print($idStorage);
+
 }
-// CREATE ARRAY FOR SEARCH QUERY
+# CREATE ARRAY FOR SEARCH QUERY
 $where_in = implode(',', $ls_idStorages);
 
 // SIMPLE SEARCH with KEYWORD from INDEX PAGE ----------------------------------
 if (isset($_POST['simple_search'])) {
 	$searchword = mysqli_real_escape_string($db, $_POST['keyword']); //keyword by user
 	// create search query with keyword
-	$query = "SELECT *
-						FROM Sample
-						WHERE idStorage IN ($where_in)
-						AND ( IF (LENGTH ('$searchword') > 0, Name LIKE '%$searchword%', 0))
-<<<<<<< HEAD
-						OR IF(LENGTH('$celltype') 	> 0, Cell_type LIKE '%$celltype%', 0)
-=======
->>>>>>> 47165bab29a6b0dd3ba4279db0f23b7c8faf398e
-						'";
+$query = "SELECT *
+            FROM Sample
+            WHERE idStorage IN ($where_in)
+            AND ( IF(LENGTH('$searchword') > 0, Name LIKE '%$searchword%', 0)
+            OR IF (LENGTH ('$searchword') > 0, Cell_type LIKE '%$searchword%',0)
+          )";
 
 } // ADVANCED SEARCH -------------------------------------------------------------
 elseif (isset($_POST['reg_search'])) {
@@ -61,14 +67,16 @@ elseif (isset($_POST['reg_search'])) {
 					)";
 
 
-} // USER ENTRIES -------------------------------------------------------------
+} // USER ENTRIES -------------------------------------------------------------#
 elseif (isset($_POST['my_entries'])) {
 	$idUser = $_SESSION["userdata"]["idUser"];
 
 	$query = "SELECT *
 						FROM Sample
 						WHERE idUser = '$idUser' ";
-} else {
+
+
+}  else {
 	echo "Something went wrong! Please try again";
 };
 
@@ -145,7 +153,7 @@ if ($results->num_rows > 0) {
 		$queryOwner = "SELECT * FROM User WHERE idUser = $idOwner";
 		$resultsOwner = mysqli_query($db, $queryOwner) or die(mysqli_error($db));
 		while($Owner = $resultsOwner->fetch_assoc()){
-			$idOwner = $Owner["Username"];
+			$OwnerName = $Owner["Username"];   # LILI: changed idOwner here to OwnerName
 		}
 
 		$table .= "<tr class='item'>";
@@ -157,8 +165,11 @@ if ($results->num_rows > 0) {
 		$table .= "<td class='text-center'>" . $row["Frozendate"] . "</td>";
 		$table .= "<td class='text-center'>" . $row["Amount"] . "</td>";
 		$table .= "<td class='text-center'>" . $row["Availability"] . "</td>";
-		// <a style="color:blue" href="profile_others.php"> $idOwner </a>
-		$table .= "<td class='text-center'> <a href='profile_others.php'>" . $idOwner . "</a> </td>";
+		// <a style="color:blue" href="profile_others.php"> $OwnerName </a>
+		$table .= "<td class='text-center'> <a href='profile_others.php?id= " .  $idOwner . "'>" . $OwnerName . "</a> </td>";
+    // $table .= "<td class='text-center>
+    //             <a href='profile_others.php?id= "; echo $idOwner; "' > "; echo $OwnerName ; " </a>
+    //           </td>";
 		$table .= "<td class='text-center'>" . $row["Comment"] . 	"</td>";
 		$table .=	"<td class='text-center'> <form action='delete.php' method='post'>
 										<button name=delete_entry class='btn btn-danger'> <img src='img/trash.svg'> </button>
@@ -172,15 +183,6 @@ if ($results->num_rows > 0) {
 
 }
 $table .= "</ol>";
-
-// // DELETE AN ENTRY
-// if (isset($_POST['delete_entry'])) {
-// 	$queryDelete = "DELETE FROM Sample WHERE idSample = $idSample"
-// 	$
-// }
-//
-// 	//Define the query
-// 	$query = "DELETE FROM Sample WHERE idSample={$_POST['idSample']}";
 
 
 ?>
