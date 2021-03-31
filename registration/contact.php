@@ -37,11 +37,11 @@
               <div class="row">
                 <div class="col-sm-6 form-group">
                     <label class="m-sm-0">Your name</label>
-                  <input class="form-control"  name="name" placeholder="<?php echo $_SESSION['fullname'] ?>" type="text" required>
+                  <input class="form-control"  name="name" placeholder="<?php echo $_SESSION["userdata"]["Full_name"]?>" type="text" required>
                 </div>
                 <div class="col-sm-6 form-group">
                     <label class="m-sm-0">Your email</label>
-                  <input class="form-control"  name="email" placeholder="<?php echo $_SESSION['email'] ?>" type="email" required>
+                  <input class="form-control"  name="email" placeholder="<?php echo $_SESSION["userdata"]["Email"] ?>" type="email" required>
               </div>
             </div>
             <label class="m-sm-0">Your Message</label>

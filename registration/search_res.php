@@ -1,22 +1,38 @@
 <?php
 include('server.php');
-print("<br><br>");
+#print("<br><br><br>");
+
 // COMMENT LILI: 	there are 2 ways to end up here:
 // 											a. over simple keyword search from Index
 //											b. over Advanced Search
 // 								The following if statement will process the $_POST variables accordingly
 // 								The query search and the result presentation is the same for both cases.
 
+# LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
+$ls_idStorages = array(); // array holding the storageIDs of our current user
+$query_storageids = "SELECT * FROM User_has_Storage
+                      WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+                      ";
+$resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
+
+while ($foundID = $resStorIDs->fetch_assoc()) {
+  $idStorage = $foundID['Storage_idStorage'];
+  array_push($ls_idStorages, $idStorage);
+#  print("Your User is connected to Freezers with ID: "); print($idStorage);
+}
+// CREATE ARRAY FOR SEARCH QUERY
+$where_in = implode(',', $ls_idStorages);
+
 // SIMPLE SEARCH with KEYWORD from INDEX PAGE ----------------------------------
 if (isset($_POST['simple_search'])) {
 	$searchword = mysqli_real_escape_string($db, $_POST['keyword']); //keyword by user
 	// create search query with keyword
-
 	$query = "SELECT *
 						FROM Sample
-						WHERE ( IF (LENGTH ('$searchword') > 0, Name LIKE '%$searchword%', 0))
+						WHERE idStorage IN ($where_in)
+						AND ( IF (LENGTH ('$searchword') > 0, Name LIKE '%$searchword%', 0))
+						OR IF(LENGTH('$celltype') 	> 0, Cell_type LIKE '%$celltype%', 0)
 						'";
-
 
 } // ADVANCED SEARCH -------------------------------------------------------------
 elseif (isset($_POST['reg_search'])) {
@@ -30,7 +46,8 @@ elseif (isset($_POST['reg_search'])) {
 	// create the search query using the fields from above (empty if not provided by user)
 	$query = "SELECT *
 						FROM Sample
-						WHERE ( IF(LENGTH('$samplename') > 0, Name LIKE '%$samplename%' , 0)
+						WHERE idStorage IN ($where_in)
+						AND ( IF(LENGTH('$samplename') > 0, Name LIKE '%$samplename%' , 0)
 				    OR IF(LENGTH('$celltype') 	> 0, Cell_type LIKE '%$celltype%', 0)
 						OR IF(LENGTH('$idStorage') 	> 0, idStorage = '$idStorage' , 0)
 				    OR IF(LENGTH('$frozendate') > 0, Frozendate LIKE '%$frozendate%' , 0)
@@ -63,14 +80,39 @@ if ($results->num_rows > 0) {
 							  <path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z'/>
 							  <path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z'/>
 							</svg></th>
-							<th class='text-center' onclick='sortTable(1)'>Cell Type</th>
-							<th class='text-center' onclick='sortTable(2)'>Freezer name</th>
-							<th class='text-center' class='text-center' onclick='sortTable(3)'>Freezer Location</th>
-							<th class='text-center' onclick='sortTable(10)'>Position</th>
-							<th class='text-center' onclick='sortTable(5)'>Date</th>
-							<th class='text-center' onclick='sortTable(6)'>Amount</th>
-							<th class='text-center' onclick='sortTable(7)'>Availability</th>
-							<th class='text-center' onclick='sortTable(8)'>Owner</th>
+							<th class='text-center' onclick='sortTable(1)'>Cell Type <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-sort-alpha-down' viewBox='0 0 16 16'>
+							  <path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z'/>
+							  <path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z'/>
+							</svg></th>
+							<th class='text-center' onclick='sortTable(2)'>Freezer name <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-sort-alpha-down' viewBox='0 0 16 16'>
+							  <path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z'/>
+							  <path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z'/>
+							</svg></th>
+							<th class='text-center' class='text-center' onclick='sortTable(3)'>Freezer Location<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-sort-alpha-down' viewBox='0 0 16 16'>
+							  <path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z'/>
+							  <path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z'/>
+							</svg></th>
+							<th class='text-center' onclick='sortTable(10)'>Position <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-sort-alpha-down' viewBox='0 0 16 16'>
+							  <path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z'/>
+							  <path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z'/>
+							</svg></th>
+							<th class='text-center' onclick='sortTable(5)'>Date <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-sort-alpha-down' viewBox='0 0 16 16'>
+							  <path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z'/>
+							  <path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z'/>
+							</svg></th>
+							<th class='text-center' onclick='sortTable(6)'>Amount <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-sort-numeric-up' viewBox='0 0 16 16'>
+                              <path d='M12.438 1.668V7H11.39V2.684h-.051l-1.211.859v-.969l1.262-.906h1.046z'/>
+                              <path fill-rule='evenodd' d='M11.36 14.098c-1.137 0-1.708-.657-1.762-1.278h1.004c.058.223.343.45.773.45.824 0 1.164-.829 1.133-1.856h-.059c-.148.39-.57.742-1.261.742-.91 0-1.72-.613-1.72-1.758 0-1.148.848-1.835 1.973-1.835 1.09 0 2.063.636 2.063 2.687 0 1.867-.723 2.848-2.145 2.848zm.062-2.735c.504 0 .933-.336.933-.972 0-.633-.398-1.008-.94-1.008-.52 0-.927.375-.927 1 0 .64.418.98.934.98z'/>
+                              <path d='M4.5 13.5a.5.5 0 0 1-1 0V3.707L2.354 4.854a.5.5 0 1 1-.708-.708l2-1.999.007-.007a.498.498 0 0 1 .7.006l2 2a.5.5 0 1 1-.707.708L4.5 3.707V13.5z'/>
+                            </svg></th>
+							<th class='text-center' onclick='sortTable(7)'>Availability <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-sort-alpha-down' viewBox='0 0 16 16'>
+							  <path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z'/>
+							  <path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z'/>
+							</svg></th>
+							<th class='text-center' onclick='sortTable(8)'>Owner <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-sort-alpha-down' viewBox='0 0 16 16'>
+							  <path fill-rule='evenodd' d='M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z'/>
+							  <path d='M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z'/>
+							</svg></th>
 							<th class='text-center' onclick='sortTable(9)'>Comment</th>
 							<th>DELETE
 								</th>
@@ -139,6 +181,7 @@ $table .= "</ol>";
 <html>
 <head>
 
+
 </head>
 <body>
 	<?php include('header.html') ?>
@@ -163,27 +206,27 @@ $table .= "</ol>";
 			</div>
 			<br>
 			<br>
-			<!-- BUTTONS -->
-			<form action="/search.php" method="post">
-				<div class="input-group">
-					<div class="container">
-				  		<div class="row">
-							<div class="col-12 col-md-2">
-								<button type="submit" class="btn btn-success" name"newsearch" id="newsearch" href="search.php">New Search <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-							   	   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-							   	 </svg></button>
-							</div>
-							<div class="col-12 col-md-1">
-								<button type="submit" class="btn btn-info" name"home" id="home" formacion="/index.php">Go Home <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
-						          <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
-						        </svg></button>
-							</div>
-						</div>
-					</div>
-
-			</form>
-	</div>
-
+      <!-- BUTTONS -->
+      			<form action="search.php" method="post">
+      				<div class="input-group">
+      					<div class="container">
+      				  		<div class="row">
+      							<div class="col-12 col-md-2">
+      								<button type="submit" class="btn btn-success" name="newsearch" id="newrequest">New Search <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+      							   	   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+      							   	 </svg></button>
+      							</div>
+                  </form>
+                  <form action="index.php" method="post">
+      							<div class="col-12 col-md-1">
+      								<button type="submit" class="btn btn-info" name="home" id="home">Go Home <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
+      						          <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
+      						        </svg></button>
+      							</div>
+                      </form>
+      						</div>
+      					</div>
+      	</div>
 
 <br>
 <br>

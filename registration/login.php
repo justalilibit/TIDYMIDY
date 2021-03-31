@@ -19,7 +19,7 @@ if (isset($_POST['login_user'])) {
 
   	$password = md5($password);
   	$query = "SELECT * FROM User WHERE Username='$username' AND Password='$password'";
-  	$results = mysqli_query($db, $query);
+  	$results = mysqli_query($db, $query) or die(mysqli_error($db));
   	if (mysqli_num_rows($results) == 1) {
   	  $_SESSION['username'] = $username;
       $_SESSION['userdata'] = mysqli_fetch_assoc($results);
