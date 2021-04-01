@@ -138,8 +138,8 @@ if ($results->num_rows > 0) {
 		$table .= "<td class='text-center'>" . $row["Amount"] . "</td>";
 		$table .= "<td class='text-center'>" . $row["Availability"] . "</td>";
 		// <a style="color:blue" href="profile_others.php"> $OwnerName </a>
-		$table .= "<td class='text-center'> <a href='profile_others.php?id= " .  $idOwner . "'>" . $OwnerName ."</a> </td>";
-    $table .=	"<td> <form action='profile_others.php' method='post'>
+		# $table .= "<td class='text-center'> <a href='profile_others.php?id= " .  $idOwner . "'>" . $OwnerName ."</a> </td>";
+    		$table .=	"<td> <form action='profile_others.php' method='post'>
                     <button input='submit' name='profile_others' class='btn btn-danger'> $OwnerName </button>
                     <input type='hidden' name='idOwner' value=". $idOwner. " />
                 </form>
