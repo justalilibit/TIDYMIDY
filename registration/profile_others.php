@@ -1,7 +1,12 @@
 <?php include('server.php');
 print("<br><br><br>");
 print("THIS WAS PASSED:");
-print($idOwner);
+if(isset($_POST['profile_others'])){
+  if  (isset($_POST['idOwner'])) {
+    print("INSIDE SECOND IF");
+    $s = mysqli_real_escape_string($db, $_POST['idOwner']);
+    print($s);
+}}
 
 $query = "SELECT * FROM User WHERE Username='$idOwner'";
 $results = mysqli_query($db, $query) or die(mystringsqli_error($db));

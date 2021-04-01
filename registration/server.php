@@ -11,7 +11,7 @@ $errors = array();
 $idSample = $samplename = $celltype = $position = $amount = $frozendate = $availability = $comment = $idOwner = $Location = $Contact_email = $Full_name = $Contact_phone = $Position = $Main_task = $Find_me = $Institute = '';
 $idStorage = $storagename = $location = "";
 
-$idLabgroup = $requestdate = $create_labgroupname ="";
+$idLabgroup = $requestdate = $add_labgroupname = $create_labgroupname ="";
 $create_storagename = $create_location = $add_storagename = "";
 $errors_registration = array('username' => '', 'email' => '', 'password_1' => '', 'password_2' => '', 'fullname' => '', 'cemail' => '', 'cphone' => '');
 $errors_entry = array('samplename' => '', 'position' => '', 'amount' => '', 'frozendate' => '', 'idStorage' => '');
@@ -21,6 +21,119 @@ $errors_entry = array('samplename' => '', 'position' => '', 'amount' => '', 'fro
  // $db = mysqli_connect('localhost', 'tidytubes', 'Welcome123%', 'tidytubes');    # jo & lili pw
 
 
+
+ # DEFINE FUNCTIONS:-----------------------------------------------------------#
+
+ #----------------------------- STORAGE ---------------------------------------#
+
+ # FUNCTION to check if Storagename already exists -----------------------------#
+ function storageexists($db, $storagename) {
+   // function to see if Storagename already exists. returns result object or
+   $query = "SELECT * FROM Storage
+                     WHERE Storagename = '$storagename'";
+   $result = mysqli_query($db, $query) or die(mysqli_error($db));
+   return $result;
+ }
+
+ # FUNCTION to check if User already connected to Storage ----------------------#
+ function Stor_alreadyconnected($db, $idStorage) {
+   $query = "SELECT * FROM User_has_Storage
+             WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+             AND Storage_idStorage = '$idStorage'
+             ";
+             // print($query);
+   $result = mysqli_query($db, $query) or die(mysqli_error($db));
+   return $result;
+ }
+
+ # FUNCTION connecting current User to Storage that fits the prerun query ------#
+  function connectUserStorage($db, $res_foundStor) {
+    $idStorage ="";
+    while($storage = $res_foundStor->fetch_assoc()){
+      $idStorage = $storage["idStorage"];
+    }
+    $alreadyexists = Stor_alreadyconnected($db, $idStorage);
+
+    if ($alreadyexists) {
+      if ($alreadyexists->num_rows === 0){ // User and Storage not yet connected
+        // connecting User and Storage
+        $queryConnectU_S = "INSERT INTO User_has_Storage (User_idUser, Storage_idStorage)
+                  VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idStorage')";
+        mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
+     }
+   }
+ }
+
+
+ #---------------------------- LABGROUP ---------------------------------------#
+
+# FUNCTION to check if labgroupname already exists ----------------------------#
+function Labgroupexists($db, $labgroupname) {
+  // function to see if labgroupname already exists. returns result object or
+  $query = "SELECT * FROM Labgroup
+                    WHERE Labgroupname = '$labgroupname'";
+  $result = mysqli_query($db, $query) or die(mysqli_error($db));
+  return $result;
+
+}
+
+
+# FUNCTION to check if User already connected to labgroup ---------------------#
+function alreadyconnected($db, $idLabgroup) {
+  $query = "SELECT * FROM User_has_Labgroup
+            WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
+            AND Labgroup_idLabgroup = '$idLabgroup'
+            ";
+            // print($query);
+  $result = mysqli_query($db, $query) or die(mysqli_error($db));
+  return $result;
+
+}
+
+
+# FUNCTION connecting current User to labgroup that fits the prerun query -----#
+ function connectUserLabgroup($db, $res_foundLab) {
+   $idLabgroup ="";
+   while($labgroup = $res_foundLab->fetch_assoc()){
+     $idLabgroup = $labgroup["idLabgroup"];
+   }
+   $alreadyexists = alreadyconnected($db, $idLabgroup);
+
+
+  if (empty($create_labgroupname)) {
+    array_push($errors, "Unable to add Labgroup. Name is required");}
+
+  if (count($errors) == 0) {
+    // CHECK  IF STORAGE ENTRY ALREADY EXISTS
+    $res_findLabgroup = labgroupexists($db, $create_labgroupname);
+
+    if ($res_findLabgroup) {
+      if ($res_findLabgroup->num_rows === 0){ // no freezer with this name exists yet
+        // CREATE NEW STORAGE
+        $queryNewLabgroup = "INSERT INTO Labgroup (Labgroupname)
+                  VALUES ('$create_labgroupname')";
+        mysqli_query($db, $queryNewLabgroup) or die(mysqli_error($db));
+
+        // CHECK THAT ENTRY WAS MADE
+        $res_LabgroupMade = labgroupexists($db, $create_labgroupname);
+        if ($res_LabgroupMade) {
+          if ($res_LabgroupMade->num_rows === 0){ // Storagename is not in db ;
+            array_push($errors, "No Lab group was created. An unexpected Error occured. Please try again.");;
+          } else { // Storagename is in db ;
+            // CONNECT U and S
+            connectUserLabgroup($db, $res_LabgroupMade);
+          }
+        }
+      } else {
+        array_push($errors, "A Lab Group with this name already exists. Click 'Add existing Lab Group' or choose different name");
+      }
+    }
+  }
+}
+
+# END DEFINE FUNCTIONS -------------------------------------------------------#
+
+#-----------------------------------------------------------------------------#
 
 
 
