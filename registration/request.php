@@ -80,7 +80,6 @@ if (isset($_POST['add_labgroup'])) {
 }
 # END ADD AN EXISTING labgroup ENTRY -------------------------------------------#
 
-
 # END: NEW STORAGE ENTRY ------------------------------------------------------#
 
 
@@ -196,26 +195,18 @@ if (isset($_POST['reg_request'])) {
                                 value="<?php echo $amount; ?>"
                                 >
                             </div>
-                            <<div class="col-sm-3 d-sm-flex align-items-center">
+                            <div class="col-sm-3 d-sm-flex align-items-center">
                                 <label class="m-sm-0">For who are these tubes?</label>
                                 <select name="availability" class="custom-select"
-                                    <option selected>Privat</option>
-                                    <option value="1">Privat</option>
-                                    <option value="2">Ask me first</option>
-                                    <option value="3">Public</option>
+                                    <option selected>Private</option>
+                                    <option value="Private">Private</option>
+                                    <option value="Ask me first">Ask me first</option>
+                                    <option value="Public">Public</option>
                                   </select>
                             </div>
-                            <div class="col-sm-3 d-sm-flex align-items-center">
-                              <label class="m-sm-0">Position</label>
-                              <input
-                                type="text"
-                                name="position"
-                                id="position"
-                                class="form-control ml-sm-2"
-                                placeholder="hrhrhrhr"
-                                value="<?php echo $position; ?>"
-                              >
-                          </div>
+                        </div>
+
+                        <div class="row">
                           <div class="col-sm-3 d-sm-flex align-items-center">
                             <label class="m-sm-0">Date</label>
                             <input
@@ -226,7 +217,18 @@ if (isset($_POST['reg_request'])) {
                               value="<?php echo $requestdate;?>"
                               >
                           </div>
-                          <div class="input-group">
+
+                          <div class="col-sm-3 d-sm-flex align-items-center">
+                            <label class="m-sm-0">Position</label>
+                            <input
+                              type="text"
+                              name="position"
+                              class="form-control ml-sm-2"
+                              placeholder="it must go on rack 9-7A"
+                              value="<?php echo $position; ?>"
+                            >
+                        </div>
+
                               <br>
 
                               <!-- DISPLAY CONNECTED labgroupS -->
@@ -245,8 +247,7 @@ if (isset($_POST['reg_request'])) {
                                   <option selected >nothing selected</option>;
                                 </select>
                               </div>
-                         </div>
-                        </div>
+                          </div>
                     <div class="row">
                         <div class="px-sm-2 col-sm-7 d-sm-flex align-items-center mt-2 mt-sm-0">
                           <label for="exampleFormControlTextarea1">Comments</label>
@@ -254,24 +255,77 @@ if (isset($_POST['reg_request'])) {
                           id="description"
                           rows="10"
                           name="comment"
-                          value="<?php echo $comment; ?>"
                           placeholder=" (Recomended) Use that one protocol that works better, place it in the fridge at the end of the corridor, position right, IMPORTANT I NEED THIS TO BE DONE BY 15:30"
-                          ></textarea>
+                          ><?php echo $comment; ?></textarea>
                         </div>
                     </div>
 
                     <br>
-                    <button type="submit" class="btn" name="reg_request">Add Request</button>
+                    <div class="row">
+                        <div class="col-3 col-md-12">
+                    <button type="submit" class="btn btn-success" name="reg_request">Add Request <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
+                  <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"/>
+                  <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+                </svg></button>
+                </form>
+
+
+                <div class="col-3 col-md-3">
+              <form method="post" action="request_res.php">
+              <button type="submit" class="btn btn-primary" name="see_request">SEE Request <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+              <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+              <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+            </svg></button>
+            </form>
+        </div>
+    </div>
+
+    </div>
+    <br>
+
+
+
+
+            <!--- CREATE_BUTTON: THIS IS CREATING A NEW LAB GROUP---------------------------------------------------------------------------------------------------------------------------->
+            <div class="col-2 col-md-3">
+
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal_create">Create NEW Lab Group <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-briefcase-fill" viewBox="0 0 16 16">
+              <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v1.384l7.614 2.03a1.5 1.5 0 0 0 .772 0L16 5.884V4.5A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5z"/>
+              <path d="M0 12.5A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5V6.85L8.129 8.947a.5.5 0 0 1-.258 0L0 6.85v5.65z"/>
+            </svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+            </svg></button>
+        <div id="myModal_create" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h5 class="modal-title">Create new labgroup
+                </div>
+                <div class="modal-body">
+                  <label>Labgroup name: </label>
+                  <input type="text" placeholder='New Labgroup Name' name="createLabgroupname" value="<?php echo $create_labgroupname; ?>">
+
+                  <button type="submit" class="btn btn-success" name="reg_labgroup">Create new Labgroup</button>
+
+          </div>
+      </div>
+
+        </div>
+      </div>
+    </div>
 
 
                     <!--- ADD_BUTTON: THIS IS ADDING AN EXISTING ALREADY THERE LABGROUP --------------------------------------------------------------------------------------------------------------------->
-
+                    <div class="col-3 col-md-2">
 
                                                 <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal">Add EXISTING Labgroup
 
 
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16">
-                                                  <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1V2zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5H2zm13-3H1v2h14V2zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-briefcase-fill" viewBox="0 0 16 16">
+                                                <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v1.384l7.614 2.03a1.5 1.5 0 0 0 .772 0L16 5.884V4.5A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5z"/>
+                                                <path d="M0 12.5A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5V6.85L8.129 8.947a.5.5 0 0 1-.258 0L0 6.85v5.65z"/>
                                                 </svg></button>
                     					      <div id="myModal" class="modal fade" role="dialog">
                     					            <div class="modal-dialog">
@@ -290,38 +344,12 @@ if (isset($_POST['reg_request'])) {
                     					            </div>
                     					          </div>
                                               </div>
+                                          </div>
+
 
                                               <br>
-                    <!--- CREATE_BUTTON: THIS IS CREATING A NEW LAB GROUP---------------------------------------------------------------------------------------------------------------------------->
 
-                                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal_create">Create NEW Lab Group <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
-                                                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
-                                                          </svg></button>
-                                                    <div id="myModal_create" class="modal fade" role="dialog">
-                                                      <div class="modal-dialog">
-                                                          <!-- Modal content-->
-                                                          <div class="modal-content">
-                                                            <div class="modal-header">
-                                                              <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                              <h5 class="modal-title">Create new labgroup
-                                                            </div>
-                                                            <div class="modal-body">
-                                                              <label>Labgroup name: </label>
-                                                              <input type="text" placeholder='New Labgroup Name' name="createLabgroupname" value="<?php echo $create_labgroupname; ?>">
 
-                                                              <button type="submit" class="btn btn-success" name="reg_labgroup">Create new Labgroup</button>
-
-                    					              </div>
-                    					            </div>
-                    					          </div>
-                    					        </div>
-                                    </div>
-
-          		</form>
-              <form method="post" action="request_res.php">
-              <button type="submit" class="btn" name="see_request">SEE Request</button>
-            </form>
-          	</div>
         		  <div class="container">
         			<h3>How it works:</h3>
         				<p>Use this form to add the tubes you froze. You can choose, how others see your entries in the search field. <br>
