@@ -15,7 +15,7 @@ while ($foundID = $resResIDs->fetch_assoc()) {
  $idLabgroup= $foundID['Labgroup_idLabgroup'];
   array_push($ls_idLabgroup, $idLabgroup);
 
-  
+
 
 }
 # CREATE A NEW STORAGE ENTRY --------------------------------------------------#
@@ -79,14 +79,7 @@ if (isset($_POST['add_labgroup'])) {
 }
 # END ADD AN EXISTING labgroup ENTRY -------------------------------------------#
 
-# FUNCTION to check if labgroupname already exists -----------------------------#
-function Labgroupexists($db, $labgroupname) {
-  // function to see if labgroupname already exists. returns result object or
-  $query = "SELECT * FROM Labgroup
-                    WHERE Labgroupname = '$labgroupname'";
-  $result = mysqli_query($db, $query) or die(mysqli_error($db));
-  return $result;
-}
+
 
 
 # FUNCTION to check if User already connected to labgroup ----------------------#
@@ -165,7 +158,7 @@ if (isset($_POST['add_labgroup'])) {
 # END ADD AN EXISTING STORAGE ENTRY -------------------------------------------#
 
 # FUNCTION to check if Storagename already exists -----------------------------#
-function Labgroupexists($db, $labgroupname) {
+function labgroupexists($db, $labgroupname) {
   // function to see if Storagename already exists. returns result object or
   $query = "SELECT * FROM Labgroup
                     WHERE Labgroupname = '$labgroupname'";
@@ -173,37 +166,6 @@ function Labgroupexists($db, $labgroupname) {
   return $result;
 }
 
-# FUNCTION to check if User already connected to Storage ----------------------#
-function alreadyconnected($db, $idLabgroup) {
-  $query = "SELECT * FROM User_has_Labgroup
-            WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
-            AND Labgroup_idLabgroup = '$idLabgroup'
-            ";
-            // print($query);
-  $result = mysqli_query($db, $query) or die(mysqli_error($db));
-  return $result;
-}
-
-# FUNCTION connecting current User to Storage that fits the prerun query ------#
- function connectUserLabgroup($db, $res_foundLab) {
-   $idLabgroup ="";
-   while($labgroup = $res_foundLab->fetch_assoc()){
-     $idLabgroup = $labgroup["idLabgroup"];
-   }
-   $alreadyexists = alreadyconnected($db, $idLabgroup);
-
-   if ($alreadyexists) {
-     if ($alreadyexists->num_rows === 0){ // User and Storage not yet connected
-       // connecting User and Storage
-
-
- 
-       $queryConnectU_L = "INSERT INTO User_has_Labgroup (User_idUser, Labgroup_idLabgroup)
-                 VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idLabgroup')";
-       mysqli_query($db, $queryConnectU_L) or die(mysqli_error($db));
-    }
-  }
-}
 // NEW REQUEST
 if (isset($_POST['reg_request'])) {
 
