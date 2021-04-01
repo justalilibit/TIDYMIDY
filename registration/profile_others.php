@@ -1,11 +1,19 @@
 <?php include('server.php');
 print("<br><br><br>");
 print("THIS WAS PASSED:");
-print($idOwner);
+if(isset($_POST['profile_others'])){
+  if  (isset($_POST['idOwner'])) {
+    $s = mysqli_real_escape_string($db, $_POST['idOwner']);
+    print("THE ID OWNER IS");
+    print($s);
+}}
+#print($idOwner);
 
-$query = "SELECT * FROM User WHERE Username='$idOwner'";
+$query = "SELECT * FROM User WHERE idUser='$s'";
+print($query);
 $results = mysqli_query($db, $query) or die(mystringsqli_error($db));
 while($row = $results->fetch_assoc()) {
+  print("INSIDE WHILE");
     $idOwner = $row["idUser"];
     $Full_name = $row["Full_name"];
     $Position = $row["Position"];
@@ -19,7 +27,7 @@ while($row = $results->fetch_assoc()) {
 # LOAD STORAGEIDs CONNECTED TO THIS PROFILE -----------------------------------#
 $ls_idStorages = array(); // array holding the storageIDs of our current user
 $query_storageids = "SELECT * FROM User_has_Storage
-                      WHERE User_idUser = '$idOwner'
+                      WHERE User_idUser = '$s'
                       ";
 $resStorIDs = mysqli_query($db,$query_storageids) or die(mysqli_error($db));
 
@@ -32,7 +40,7 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
 # LOAD LABGROUPIDs CONNECTED TO THIS PROFILE  ---------------------------------#
 $ls_idLabgroup = array(); // array holding the requestIDs of our current user
 $query_labgroupids = "SELECT * FROM User_has_Labgroup
-                      WHERE User_idUser = '$idOwner'
+                      WHERE User_idUser = '$s'
                         ";
 
 $resResIDs = mysqli_query($db,$query_labgroupids) or die(mysqli_error($db));

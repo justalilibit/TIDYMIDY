@@ -80,6 +80,7 @@ if (isset($_POST['add_labgroup'])) {
 }
 # END ADD AN EXISTING labgroup ENTRY -------------------------------------------#
 
+
 # END: NEW STORAGE ENTRY ------------------------------------------------------#
 
 
@@ -104,6 +105,7 @@ if (isset($_POST['add_labgroup'])) {
   }
 }
 # END ADD AN EXISTING STORAGE ENTRY -------------------------------------------#
+
 
 // NEW REQUEST
 if (isset($_POST['reg_request'])) {
