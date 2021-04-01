@@ -46,7 +46,7 @@ if (isset($_POST['reg_labgroup'])) {
             array_push($errors, "No Lab group was created. An unexpected Error occured. Please try again.");;
           } else { // labgroupname is in db ;
             // CONNECT U and S
-            connectUserLabgroup($db, $res_LabgroupMade);
+            connectUserLabgroup($db, $res_LabgroupMade, $add_labgroupname);
           }
         }
       } else {
@@ -73,7 +73,7 @@ if (isset($_POST['add_labgroup'])) {
         if ($resLabExis->num_rows === 0){ // labgroupname is not in db yet;
           array_push($errors, "This Lab Group is not yet registered in the System. Make a new entry using 'Create New Lab Group'");;
         } else {
-          connectUserLabgroup($db, $resLabExis);
+          connectUserLabgroup($db, $resLabExis, $add_labgroupname);
         }
       }
   }
@@ -99,7 +99,7 @@ if (isset($_POST['add_labgroup'])) {
         if ($resLabExis->num_rows === 0){ // Storagename is not in db yet;
           array_push($errors, "This Lab Group is not yet registered in the System. Make a new entry using 'Create New Lab Group'");;
         } else {
-          connectUserLabgroup($db, $resLabExis);
+          connectUserLabgroup($db, $resLabExis, $add_labgroupname);
         }
       }
   }
@@ -196,7 +196,8 @@ if (isset($_POST['reg_request'])) {
                                 value="<?php echo $amount; ?>"
                                 >
                             </div>
-                            <<div class="col-sm-3 d-sm-flex align-items-center">
+                            <br>
+                            <div class="col-sm-3 d-sm-flex align-items-center">
                                 <label class="m-sm-0">For who are these tubes?</label>
                                 <select name="availability" class="custom-select"
                                     <option selected>Privat</option>

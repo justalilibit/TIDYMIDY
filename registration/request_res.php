@@ -10,7 +10,7 @@ $query_labgroupids = "SELECT * FROM User_has_Labgroup
 $resResIDs = mysqli_query($db,$query_labgroupids) or die(mysqli_error($db));
 
 while ($foundID = $resResIDs->fetch_assoc()) {
-  print("INSIDE WHILE");
+#  print("INSIDE WHILE");
  $idLabgroup= $foundID['Labgroup_idLabgroup'];
   array_push($ls_idLabgroup, $idLabgroup);
   #print("Your User is connected to Request with ID: "); print($idLabgroup);
@@ -21,8 +21,8 @@ $where_in = implode(',', $ls_idLabgroup);
 if (isset($_POST['see_request'])) {
 
   $query = "SELECT * FROM Request WHERE idLabgroup IN ($where_in)";
-  print($query);
-  print("<br><br><br>");
+#  print($query);
+#  print("<br><br><br>");
   $results = mysqli_query($db,$query) or die(mysqli_error($db));
 
   if ($results->num_rows > 0) {
@@ -62,6 +62,7 @@ if (isset($_POST['see_request'])) {
   while($Owner = $resultsOwner->fetch_assoc()){
     $idOwner = $Owner["Username"];
 }
+
 $table .= "<tr class='item'>";
 $table .= "<td>" . $row["Name"] . "</td>";
 $table .= "<td>" . $row["Cell_type"] . "</td>";
@@ -73,7 +74,7 @@ $table .= "<td>" . $row["Amount"] . "</td>";
 $table .= "<td>" . $idOwner . "</td>";
 $table .= "<td>" . $labgroupname . "</td>";
 // <a style="color:blue" href="profile_others.php"> $idOwner </a>
-$table .=	"<td> <form action='delete_request.php' method='post'>
+$table .=	"<td class='text-center'> <form action='delete_request.php' method='post'>
                 <button input='submit' name='delete_request' class='btn btn-danger'> <img src='img/trash.svg'> </button>
                 <input type='hidden' name='idRequest' value=".$row['idRequest']." />
             </form>

@@ -139,7 +139,7 @@ if ($results->num_rows > 0) {
 		$table .= "<td class='text-center'>" . $row["Availability"] . "</td>";
 		// <a style="color:blue" href="profile_others.php"> $OwnerName </a>
 		# $table .= "<td class='text-center'> <a href='profile_others.php?id= " .  $idOwner . "'>" . $OwnerName ."</a> </td>";
-    		$table .=	"<td> <form action='profile_others.php' method='post'>
+    		$table .=	"<td class='text-center'> <form action='profile_others.php' method='post'>
                     <button input='submit' name='profile_others' class='btn btn-danger'> $OwnerName </button>
                     <input type='hidden' name='idOwner' value=". $idOwner. " />
                 </form>
@@ -149,7 +149,7 @@ if ($results->num_rows > 0) {
     //           </td>";
 		$table .= "<td class='text-center'>" . $row["Comment"] . 	"</td>";
 
-    $table .=	"<td> <form action='delete.php' method='post'>
+    $table .=	"<td class='text-center'> <form action='delete.php' method='post'>
 
                     <button input='submit' name='delete_entry' class='btn btn-danger'> <img src='img/trash.svg'> </button>
                     <input type='hidden' name='idSample' value=".$row['idSample']." />
