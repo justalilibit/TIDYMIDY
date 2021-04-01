@@ -1,19 +1,19 @@
 <?php include('server.php');
-print("<br><br><br>");
-print("THIS WAS PASSED:");
+#print("<br><br><br>");
+#print("THIS WAS PASSED:");
 if(isset($_POST['profile_others'])){
   if  (isset($_POST['idOwner'])) {
     $s = mysqli_real_escape_string($db, $_POST['idOwner']);
-    print("THE ID OWNER IS");
-    print($s);
+#    print("THE ID OWNER IS");
+#    print($s);
 }}
 #print($idOwner);
 
 $query = "SELECT * FROM User WHERE idUser='$s'";
-print($query);
+#print($query);
 $results = mysqli_query($db, $query) or die(mystringsqli_error($db));
 while($row = $results->fetch_assoc()) {
-  print("INSIDE WHILE");
+#  print("INSIDE WHILE");
     $idOwner = $row["idUser"];
     $Full_name = $row["Full_name"];
     $Position = $row["Position"];
