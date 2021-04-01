@@ -122,11 +122,10 @@ if (isset($_POST['reg_info'])) {
            <textarea textarea="form-control"
            class="form-control"
            name="findme"
-           value="<?php echo $Find_me; ?>"
            placeholder="(Optional)  A short paragraf about where your colleages could find you physiscally e.g: Office 9 second floor"
            rows="8"
            cols="80"
-           ></textarea>
+           ><?php echo $Find_me; ?></textarea>
          </div>
 
          <button type="submit" class="btn btn-success" href="index.php" name="reg_info" >Start my account!
