@@ -1,12 +1,76 @@
 <?php include('server.php');
 
+// REGISTER USER
+if (isset($_POST['edit_info'])) {
+  // receive all input values from the form
+  $Full_name = mysqli_real_escape_string($db, $_POST['fullname']);
+  $Position = mysqli_real_escape_string($db, $_POST['position']);
+  $Main_task = mysqli_real_escape_string($db, $_POST['maintask']);
+  $Contact_email = mysqli_real_escape_string($db, $_POST['cemail']);
+  $Contact_phone = mysqli_real_escape_string($db, $_POST['cphone']);
+  $Institute = mysqli_real_escape_string($db, $_POST['institute']);
+  $Find_me = mysqli_real_escape_string($db, $_POST['findme']);
+
+
+  // form validation: ensure that the form is correctly filled ...
+  // by adding (array_push()) corresponding error unto $errors array
+  if (empty($Full_name)) {
+      $errors_registration['fullname'] = "Your full name is required";
+  } else {
+      if (!preg_match('/^[a-zA-Z\s]+$/', $Full_name)){ $errors_registration['fullname'] = "Your name cannot contain special characters"; }}
+
+  if (empty($Contact_email)) {$errors_registration['cemail'] = "Email is required";}
+
+  if (empty($Contact_phone)) {
+
+  } else {
+      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them";
+      }
+  }
+
+
+  if (empty($Contact_phone)) {
+
+  } else {
+      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them"; }}
+
+
+  if (empty($Contact_phone)) {
+
+  } else {
+      if (!preg_match('/^\s*\+?\s*([0-9][\s-]*){9,}$/', $Contact_phone)){ $errors_registration['cphone'] = "Your contact phone must have only numbers, and at least 9 of them"; }}
+
+  if(array_filter($errors_registration)){
+
+  } else {
+  	$query = "UPDATE User
+              SET Full_name='$Full_name',
+              Position='$Position',
+              Main_task='$Main_task',
+              Institute='$Institute',
+              Contact_email='$Contact_email',
+              Contact_phone='$Contact_phone',
+              Find_me='$Find_me'
+              WHERE idUser='".$_SESSION["userdata"]["idUser"]."'";
+
+    print("<br><br><br>THIS IS THE QUERY:<br>"); print($query);
+
+
+  	mysqli_query($db, $query) or die(mysqli_error($db));
+    $query_edit = "SELECT * FROM User WHERE Username='".$_SESSION["userdata"]["idUser"]."'";
+    $results_edit = mysqli_query($db, $query_edit) or die(mysqli_error($db));
+    header('location: login.php');
+
+}
+}
 
 
 
+// print_r($_SESSION['userdata']);
 
-$query = "SELECT * FROM User WHERE Username='".$_SESSION["username"]."' ";
-$results = mysqli_query($db, $query) or die(mystringsqli_error($db));
-while($row = $results->fetch_assoc()) {
+$query_profile = "SELECT * FROM User WHERE idUser='".$_SESSION["userdata"]["idUser"]."' ";
+$results_profile = mysqli_query($db, $query_profile) or die(mystringsqli_error($db));
+while($row = $results_profile->fetch_assoc()) {
     $Full_name = $row["Full_name"];
     $Position = $row["Position"];
     $Main_task = $row["Main_task"];
@@ -15,8 +79,6 @@ while($row = $results->fetch_assoc()) {
     $Institute = $row["Institute"];
     $Find_me = $row["Find_me"];
 }
-$_SESSION['fullname'] = $Full_name;
-
 
 # LOAD STORAGEIDs CONNECTED TO CURRENT USER -----------------------------------#
 $ls_idStorages = array(); // array holding the storageIDs of our current user

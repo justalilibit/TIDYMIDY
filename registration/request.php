@@ -1,3 +1,4 @@
+
 <?php
 
 include('server.php');
@@ -80,58 +81,6 @@ if (isset($_POST['add_labgroup'])) {
 # END ADD AN EXISTING labgroup ENTRY -------------------------------------------#
 
 
-
-
-# FUNCTION to check if User already connected to labgroup ----------------------#
-function alreadyconnected($db, $idLabgroup) {
-  $query = "SELECT * FROM User_has_Labgroup
-            WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
-            AND Labgroup_idLabgroup = '$idLabgroup'
-            ";
-            // print($query);
-  $result = mysqli_query($db, $query) or die(mysqli_error($db));
-  return $result;
-}
-
-# FUNCTION connecting current User to labgroup that fits the prerun query ------#
- function connectUserLabgroup($db, $res_foundLab) {
-   $idLabgroup ="";
-   while($labgroup = $res_foundLab->fetch_assoc()){
-     $idLabgroup = $labgroup["idLabgroup"];
-   }
-   $alreadyexists = alreadyconnected($db, $idLabgroup);
-
-
-  if (empty($create_labgroupname)) {
-    array_push($errors, "Unable to add Labgroup. Name is required");}
-
-  if (count($errors) == 0) {
-    // CHECK  IF STORAGE ENTRY ALREADY EXISTS
-    $res_findLabgroup = labgroupexists($db, $create_labgroupname);
-
-    if ($res_findLabgroup) {
-      if ($res_findLabgroup->num_rows === 0){ // no freezer with this name exists yet
-        // CREATE NEW STORAGE
-        $queryNewLabgroup = "INSERT INTO Labgroup (Labgroupname)
-                  VALUES ('$create_labgroupname')";
-        mysqli_query($db, $queryNewLabgroup) or die(mysqli_error($db));
-
-        // CHECK THAT ENTRY WAS MADE
-        $res_LabgroupMade = labgroupexists($db, $create_labgroupname);
-        if ($res_LabgroupMade) {
-          if ($res_LabgroupMade->num_rows === 0){ // Storagename is not in db ;
-            array_push($errors, "No Lab group was created. An unexpected Error occured. Please try again.");;
-          } else { // Storagename is in db ;
-            // CONNECT U and S
-            connectUserLabgroup($db, $res_LabgroupMade);
-          }
-        }
-      } else {
-        array_push($errors, "A Lab Group with this name already exists. Click 'Add existing Lab Group' or choose different name");
-      }
-    }
-  }
-} # end reg_storage
 # END: NEW STORAGE ENTRY ------------------------------------------------------#
 
 
@@ -157,14 +106,6 @@ if (isset($_POST['add_labgroup'])) {
 }
 # END ADD AN EXISTING STORAGE ENTRY -------------------------------------------#
 
-# FUNCTION to check if Storagename already exists -----------------------------#
-function labgroupexists($db, $labgroupname) {
-  // function to see if Storagename already exists. returns result object or
-  $query = "SELECT * FROM Labgroup
-                    WHERE Labgroupname = '$labgroupname'";
-  $result = mysqli_query($db, $query) or die(mysqli_error($db));
-  return $result;
-}
 
 // NEW REQUEST
 if (isset($_POST['reg_request'])) {

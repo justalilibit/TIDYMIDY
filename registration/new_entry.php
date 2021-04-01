@@ -76,43 +76,6 @@ if (isset($_POST['adding_storage'])) {
 }
 # END ADD AN EXISTING STORAGE ENTRY -------------------------------------------#
 
-# FUNCTION to check if Storagename already exists -----------------------------#
-function storageexists($db, $storagename) {
-  // function to see if Storagename already exists. returns result object or
-  $query = "SELECT * FROM Storage
-                    WHERE Storagename = '$storagename'";
-  $result = mysqli_query($db, $query) or die(mysqli_error($db));
-  return $result;
-}
-
-# FUNCTION to check if User already connected to Storage ----------------------#
-function alreadyconnected($db, $idStorage) {
-  $query = "SELECT * FROM User_has_Storage
-            WHERE User_idUser = '".$_SESSION["userdata"]["idUser"]."'
-            AND Storage_idStorage = '$idStorage'
-            ";
-            // print($query);
-  $result = mysqli_query($db, $query) or die(mysqli_error($db));
-  return $result;
-}
-
-# FUNCTION connecting current User to Storage that fits the prerun query ------#
- function connectUserStorage($db, $res_foundStor) {
-   $idStorage ="";
-   while($storage = $res_foundStor->fetch_assoc()){
-     $idStorage = $storage["idStorage"];
-   }
-   $alreadyexists = alreadyconnected($db, $idStorage);
-
-   if ($alreadyexists) {
-     if ($alreadyexists->num_rows === 0){ // User and Storage not yet connected
-       // connecting User and Storage
-       $queryConnectU_S = "INSERT INTO User_has_Storage (User_idUser, Storage_idStorage)
-                 VALUES ('".$_SESSION["userdata"]["idUser"]."', '$idStorage')";
-       mysqli_query($db, $queryConnectU_S) or die(mysqli_error($db));
-    }
-  }
-}
 
  # CREATE A NEW ENTRY #--------------------------------------------------------#
  if (isset($_POST['reg_entry'])) {

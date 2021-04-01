@@ -102,10 +102,9 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
 							 >
 					 </div>
 
-                 </div>
 
+                         <div class="col-sm-3 d-sm-flex align-items-center">
 
-					 <div class="input-group">
 							 <br>
 							 <!-- DISPLAY CONNECTED STORAGES -->
 							 <div class="input-group">
@@ -122,24 +121,24 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
 									 }?>
 								 </select>
 							 </div>
-					</div>
-
-					<div class="input-group">
- 							<br>
+                         </div>
 					</div>
 
 
 		      <div class="input-group">
+                  <br>
+
 			   	  	<button type="submit" class="btn btn-success" name="reg_search">Search
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
 							  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
 							</svg></button>
-			   	  	<button type="submit" class="btn btn-success" name="reg_search">Search</button>
 		   		</div>
 
-			</div>
 		</form>
 	</div>
+    <br>
+    <br>
+
 	<?php include('footer.html') ?>
 
  </body>
