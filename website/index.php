@@ -16,7 +16,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Home</title>
+    <link rel="icon" href="img/tube.ico">
+
 </head>
 <body>
     <div class="jumbotron text-center" style="margin-bottom: 0px;">
@@ -32,10 +33,11 @@
             </div>
         </form>
 
+<br>
         <form class="form-inline" method="post" action="search_res.php">
             <div class="input-group">
                   <div class="input-group-btn">
-                    <button type="submit" class="btn btn-success" name="my_entries">Show all my Tubes</button>
+                    <button type="submit" class="btn btn-primary" name="my_entries">Show all my Tubes</button>
                   </div>
             </div>
         </form>
@@ -78,6 +80,7 @@
 </style>
 
 <div class="carrousel text-center">
+    <br>
 <h2 style="color: #8072F9;"  ">WHAT OUR COSTUMERS SAY</h2>
 <div id="myCarousel" class="carousel slide text-center" data-ride="carousel">
   <!-- Indicators -->
@@ -108,7 +111,7 @@
   .carrousel{
       background-color: #add8e6;
       position: relative;
-      top: -28%;
+      top: -18%;
   }
 
   .carousel-control.right, .carousel-control.left {
@@ -266,7 +269,7 @@
 
                       .team{
                           position: relative;
-                          top: -250px;
+                          top: -50px;
                       }
 
                       .team-item {

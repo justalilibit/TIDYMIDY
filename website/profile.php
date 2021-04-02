@@ -139,10 +139,11 @@ while ($foundID = $resResIDs->fetch_assoc()) {
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+<head>
+    <link rel="icon" href="img/tube.ico">
 
-    <head>
-        <meta charset="utf-8">
-        <title></title>
+</head>
+
     <body>
         <?php include('header.html') ?>
         <br>
@@ -237,17 +238,6 @@ while ($foundID = $resResIDs->fetch_assoc()) {
         </div>
     </div>
 </div>
-
-
-<td> <form name='delete_entry' action='delete.php' method='post'>
-                                <input type='submit' name='delete_entry' value='Delete' />
-                                <input type='hidden' name='idSample' value="; echo $row["idSample"]; "/>
-            </form>
-
-<form class="other_user" action="profile_others.php" method="post">
-    <input type="text" name="" value="">   <a style="color:blue" name="" href="profile_others.php"> <?php echo $idOwner; ?></a>
-</form>
-
 
 <style media="screen">
 

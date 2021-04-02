@@ -35,6 +35,7 @@ if (isset($_POST['login_user'])) {
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" href="img/tube.ico">
   <title>Registration system PHP and MySQL</title>
   <link href="https://fonts.googleapis.com/css?family=Muli:400,600&display=swap" rel="stylesheet">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css'>

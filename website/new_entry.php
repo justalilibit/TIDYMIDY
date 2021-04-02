@@ -102,9 +102,14 @@ if (isset($_POST['adding_storage'])) {
    if (empty($samplename)) { $errors_entry['samplename'] = "Tube name is required"; }
    if (empty($position)) { $errors_entry['position'] = "Position is required"; }
    if (empty($amount)) { $errors_entry['amount'] = "Amount is required"; }
-   if (empty($frozendate)) { $errors_entry['frozendate'] = "Frozen date is required"; }
-   if ($idStorage == 1) { $errors_entry['idStorage'] = "Please select a valid Storage"; }
-   #if (!is_int($idStorage)) { array_push($errors, "Please select a valid Storage"); print($idStorage); }
+   else{
+       if (!preg_match('/^[+]?\d+([.]\d+)?$/', $amount)) { $errors_entry['amount'] = "Negative numbers are not allowed"; }
+   };
+   if (empty($frozendate)) { $errors_entry['frozendate'] = "A date is required"; }
+   else{
+       if (!preg_match('/^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/', $frozendate)) { $errors_entry['frozendate'] = "check the format of your date"; }
+   };
+    #if (!is_int($idStorage)) { array_push($errors, "Please select a valid Storage"); print($idStorage); }
 // /^\S*$/
 
    // Finally, add the new entry in the sample table
@@ -128,6 +133,8 @@ if (isset($_POST['adding_storage'])) {
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" href="img/tube.ico">
+
       <script language="JavaScript" type="text/javascript">
 
       function checkEntry(){
@@ -144,7 +151,6 @@ if (isset($_POST['adding_storage'])) {
 					<div class="jumbotron text-center" style="margin-bottom: 0px;">
 		          <h1>New Entry <img style="width:75px;"  src="img/eppp.png" alt=""> </h1>
 		          <p>Add your tubes to the system, before you forget where you put them!</p>
-                  <?php printf($idStorage) ?>
 		      </div>
 
 					<div class="container">
@@ -236,7 +242,6 @@ if (isset($_POST['adding_storage'])) {
                                           $res_storage =mysqli_query($db, $storage_sql) or die(mysqli_error($db));
                                             while ($storageEntry = $res_storage->fetch_assoc()){
                                               ?>
-                                              <option value='1' selected>Select a storage</option>
                                               <option value='<?php echo $storageEntry['idStorage']; ?>'><?php echo $storageEntry['Storagename']; ?></option><?php
                                             }
                                         }?>
@@ -251,9 +256,8 @@ if (isset($_POST['adding_storage'])) {
                                     <textarea class="form-control"
                                     rows="10"
                                     name="comment"
-                                    value="<?php echo $comment; ?>"
-                                    placeholder="Use that one protocol that works better, place it in the fridge at the end of the corridor, position right, IMPORTANT I NEED THIS TO BE DONE BY 15:30"
-                                    ></textarea>
+                                    placeholder="(RECOMENDED) I used that one protocol that works better // 15ul // IMPORTANT I NEED THIS TO BE DONE BY 15:30"
+                                    ><?php echo $comment; ?></textarea>
                                 </div>
 
                             </div>
@@ -339,10 +343,10 @@ if (isset($_POST['adding_storage'])) {
 
 		<div class="container">
 			<h3>How it works:</h3>
-				<p>Use this form to add the tubes you froze. You can choose, how others see your entries in the search field. <br>
-				<strong>Private:</strong> Just you can access the entry<br>
-				<strong>Ask me first:</strong> Others have to ask permission<br>
-				<strong>Public:</strong> Everyone may access the entry</p>
+				<p>Use this form to add the tubes you create.<br>
+                    <strong>Private:</strong> Careful! you do't want to use something that is not yours right?<br>
+                    <strong>Ask me first:</strong> You may contact the owner of the tube before using it, you can access the contact info by clicking on the owner ;)<br>
+                    <strong>Public:</strong> Hey! There's anything better than sharing? You may use it freely, serve yourself.</p>
                 <p><button type="submit" class="btn btn-success " name="reg_entry" disabled>Add entry
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-plus" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>

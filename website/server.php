@@ -8,18 +8,20 @@ $table ="";       //result table for search
 $keyword = $searchword = "";  //for simple search on index page
 $errors = array();
 
-$idSample = $samplename = $celltype = $position = $amount = $frozendate = $availability = $comment = $idOwner = $Location = $Contact_email = $Full_name = $Contact_phone = $Position = $Main_task = $Find_me = $Institute = '';
+$idSample = $samplename = $celltype = $position = $amount = $frozendate = $availability = $comment = $idOwner = $Location = $Contact_email = $Full_name = $Contact_phone = $Position = $Main_task = $Find_me = $Institute = $requestdate = '';
 $idStorage = $storagename = $location = "";
 
 $idLabgroup = $requestdate = $add_labgroupname = $create_labgroupname = "";
 $create_storagename = $create_location = $add_storagename = "";
 $errors_registration = array('username' => '', 'email' => '', 'password_1' => '', 'password_2' => '', 'fullname' => '', 'cemail' => '', 'cphone' => '');
 $errors_entry = array('samplename' => '', 'position' => '', 'amount' => '', 'frozendate' => '', 'idStorage' => '');
+$errors_req = array('samplename' => '', 'position' => '', 'amount' => '', 'requestdate' => '', 'idStorage' => '');
+
 // connect to the database
 
- # $db = mysqli_connect('localhost', 'albert', '/Puiyuaru1616', 'tidytubes');   # albert pw
+  $db = mysqli_connect('localhost', 'albert', '/Puiyuaru1616', 'tidytubes');   # albert pw
 
- $db = mysqli_connect('localhost', 'tidytubes', 'Welcome123%', 'tidytubes');    # jo & lili pw
+ // $db = mysqli_connect('localhost', 'tidytubes', 'Welcome123%', 'tidytubes');    # jo & lili pw
 
 
 
@@ -113,9 +115,17 @@ function alreadyconnected($db, $idLabgroup) {
 # END DEFINE FUNCTIONS -------------------------------------------------------#
 
 #-----------------------------------------------------------------------------#
-
-
-
+// BELL NOTIFICATIONS TRY
+// $idUser_req = "";
+// if (!$_SESSION["userdata"] = ""){
+//     $idUser_req = $_SESSION["userdata"]["username"];
+//
+//     $query_req = "SELECT *
+//                         FROM Request
+//                         WHERE Username = '$idUser_req' ";
+//     //search in db
+//     $results_req = mysqli_query($db, $query_req);
+// };
 
 // NEW SEARCH
 

@@ -123,15 +123,20 @@ if (isset($_POST['reg_request'])) {
 
 // entry validation: ensure that the form is correctly filled ...
   // by adding (array_push()) corresponding error unto $errors array
-  if (empty($samplename)) { array_push($errors, "Sample name is required"); }
-  if (empty($celltype)) { array_push($errors, "Cell type is required"); }
-  if (empty($position)) { array_push($errors, "Position is required"); }
-  if (empty($amount)) { array_push($errors, "Amount is required"); }
-  if (empty($requestdate)) { array_push($errors, "Request date is required"); }
-  if (empty($idLabgroup)) { array_push($errors, "Please select a valid Labgroup"); }
-
+  if (empty($samplename)) { $errors_req['samplename'] = "Tube name is required"; }
+  if (empty($position)) { $errors_req['position'] = "Position is required"; }
+  if (empty($amount)) { $errors_req['amount'] = "Amount is required"; }
+  else{
+      if (!preg_match('/^[+]?\d+([.]\d+)?$/', $amount)) { $errors_req['amount'] = "Negative numbers are not allowed"; }
+  };
+  if (empty($requestdate)) { $errors_req['requestdate'] = "A date is required"; }
+  else{
+      if (!preg_match('/^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/', $requestdate)) { $errors_req['requestdate'] = "check the format of your date"; }
+  };
   // Finally, add the new entry in the sample table
-  if (count($errors) == 0) {
+  if(array_filter($errors_req)){
+
+  } else {
   	$query = "INSERT INTO Request (Name, Cell_type, Amount, Comment, Position, Requestdate, Availability, idUser, idLabgroup)
   			  VALUES('$samplename', '$celltype', '$amount', '$comment', '$position', '$requestdate', '$availability', '".$_SESSION["userdata"]["idUser"]."', '$idLabgroup')";
     print($query);
@@ -145,7 +150,13 @@ if (isset($_POST['reg_request'])) {
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" href="img/tube.ico">
+    <script language="JavaScript" type="text/javascript">
 
+    function checkEntry(){
+        return confirm('Is this request correct?');
+    }
+    </script>
 </head>
 <body>
 	<?php include('header.html') ?>
@@ -173,6 +184,7 @@ if (isset($_POST['reg_request'])) {
                                   placeholder="E.coli-LB-AMX50"
                                   value="<?php echo $samplename; ?>"
                                 >
+                                <div style="color:red" ><?php echo $errors_req['samplename']; ?></div>
                             </div>
                             <div class="col-sm-3 d-sm-flex align-items-center">
                               <label class="m-sm-0">Cell type</label>
@@ -195,8 +207,8 @@ if (isset($_POST['reg_request'])) {
                                 placeholder="1"
                                 value="<?php echo $amount; ?>"
                                 >
+                                <div style="color:red" ><?php echo $errors_req['amount']; ?></div>
                             </div>
-                            <br>
                             <div class="col-sm-3 d-sm-flex align-items-center">
                                 <label class="m-sm-0">For who are these tubes?</label>
                                 <select name="availability" class="custom-select"
@@ -218,6 +230,7 @@ if (isset($_POST['reg_request'])) {
                               placeholder="dd/mm/yyyy"
                               value="<?php echo $requestdate;?>"
                               >
+                              <div style="color:red" ><?php echo $errors_req['requestdate']; ?></div>
                           </div>
 
                           <div class="col-sm-3 d-sm-flex align-items-center">
@@ -229,6 +242,8 @@ if (isset($_POST['reg_request'])) {
                               placeholder="it must go on rack 9-7A"
                               value="<?php echo $position; ?>"
                             >
+                            <div style="color:red" ><?php echo $errors_req['position']; ?></div>
+
                         </div>
 
                               <br>
@@ -246,7 +261,6 @@ if (isset($_POST['reg_request'])) {
                                         ?><option value='<?php echo $labgroupEntry['idLabgroup']; ?>'><?php echo $labgroupEntry['Labgroupname']; ?></option><?php
                                       }
                                   }?>
-                                  <option selected >nothing selected</option>;
                                 </select>
                               </div>
                           </div>
@@ -257,7 +271,7 @@ if (isset($_POST['reg_request'])) {
                           id="description"
                           rows="10"
                           name="comment"
-                          placeholder=" (Recomended) Use that one protocol that works better, place it in the fridge at the end of the corridor, position right, IMPORTANT I NEED THIS TO BE DONE BY 15:30"
+                          placeholder=" (RECOMENDED) Use that one protocol that works better, place it in the fridge at the end of the corridor, position right, IMPORTANT I NEED THIS TO BE DONE BY 15:30"
                           ><?php echo $comment; ?></textarea>
                         </div>
                     </div>
@@ -265,7 +279,7 @@ if (isset($_POST['reg_request'])) {
                     <br>
                     <div class="row">
                         <div class="col-3 col-md-12">
-                    <button type="submit" class="btn btn-success" name="reg_request">Add Request <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
+                    <button type="submit" onclick="return checkEntry()" class="btn btn-success" name="reg_request">Add Request <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
                   <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"/>
                   <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
                 </svg></button>
@@ -329,7 +343,7 @@ if (isset($_POST['reg_request'])) {
                             <!-- Modal content-->
                             <div class="modal-content">
                               <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <button type="btn btn-warning" class="close" data-dismiss="modal">&times;</button>
                                 <h5 class="modal-title">Add existing labgroup</h5>
                               </div>
                               <div class="modal-body">
@@ -347,11 +361,37 @@ if (isset($_POST['reg_request'])) {
   </form>
         		  <div class="container">
         			<h3>How it works:</h3>
-        				<p>Use this form to add the tubes you froze. You can choose, how others see your entries in the search field. <br>
-        				<strong>Private:</strong> Just you can access the entry<br>
-        				<strong>Semi-privat:</strong> Others have to ask permission<br>
-        				<strong>Public:</strong> Everyone may access the entry</p>
+        				<p>Use this form to add the tubes you want other people to do for you. <br>
+        				<strong>Private:</strong> Careful! you do't want to use something that is not yours right?<br>
+        				<strong>Ask me first:</strong> You may contact the owner of the tube before using it, you can access the contact info by clicking on the owner ;)<br>
+        				<strong>Public:</strong> Hey! There's anything better than sharing? You may use it freely, serve yourself.</p>
+                        <button type="submit" class="btn btn-success" name="reg_request" disabled>Add Request <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
+                        <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"/>
+                        <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+                    </svg></button> : You need some tubes to be done? Make a request and your minions wil do it! *evil laugh*
+                                      <br>
+                                      <br>
+
+                        <button type="submit" class="btn btn-primary" name="see_request" disabled>SEE Request <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                          <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                          <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                      </svg></button> : Click me and you will see your pending request. Come on! There is stuff to do!
+                        <br>
+                        <br>
+
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal_create" disabled>Create NEW Lab Group <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
+                        <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                    </svg></button> : Are you new in the group? Ask your supervisor for the name of the lab group and add it to see their requests.
+                        <br>
+                        <br>
+
+                        <button style="position: relative;"type="button" class="btn btn-warning " data-toggle="modal" data-target="#myModal" disabled>Add EXISTING Labgroup
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-briefcase-fill" viewBox="0 0 16 16">
+                          <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v1.384l7.614 2.03a1.5 1.5 0 0 0 .772 0L16 5.884V4.5A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5z"/>
+                          <path d="M0 12.5A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5V6.85L8.129 8.947a.5.5 0 0 1-.258 0L0 6.85v5.65z"/>
+                      </svg></button> : I'm sure you are creating something big, create a lab group and remember the name, so others can add it to collaborate.
         		</div>
+                <br>
         <?php include('footer.html') ?>
         <script src="index.js" type="module"></script>
   </div>

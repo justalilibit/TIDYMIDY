@@ -1,9 +1,13 @@
+<head>
+    <meta charset="utf-8">
+    <title>TIDYTUBES</title>
 <link href="https://fonts.googleapis.com/css?family=Montserrat:100" rel="stylesheet">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link rel="shortcut icon" href="img/tube.png">
-<!-- <link rel="stylesheet" type="text/css" href="index.css"> -->
+</head>
+
 
 <!-- navigation bar -->
 
@@ -24,19 +28,22 @@
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
-              <li><a class "dropdown-item" href="profile.php">My profile</a></li>
-              <li><a class "dropdown-item" href="index.php?logout='1'" ">Log Out</a></li>
+              <li><a class "dropdown-item" href="profile.php"> <p class='text-center'>My profile</p></a></li>
+              <li><a class "dropdown-item" href="index.php?logout='1'" "><p class='text-center'>Log Out</p></a></li>
           </ul>
         </li>
         <li><a href=new_entry.php>NEW ENTRY</a></li>
         <li><a href=search.php>SEARCH</a></li>
-        <li><a href="request.php">REQUESTS</a></li>
-        <li> <a href="#"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
-             <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
-       </svg>
-       <span class="num">4</span>
-   </a>
-   </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="exercices.html">REQUESTS
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+              <li><a class "dropdown-item" href="request.php"><p class='text-center'>New Request</p></a></li>
+              <li><form method="POST" action="request_res.php"><a class "dropdown-item" href="request_res.php">
+                  <button type="submit" class="btn btn-light" name="see_request">Pending Requests</button>
+                </a></form></li>
+          </ul>
         <li><a href="contact.php">CONTACT US!</a></li>
     </ul>
   </div>

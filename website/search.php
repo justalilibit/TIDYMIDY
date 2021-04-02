@@ -24,6 +24,7 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
 <html>
 <head>
 	<title>Advanced Search</title>
+    <link rel="icon" href="img/tube.ico">
 
 </head>
 <body>

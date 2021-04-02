@@ -89,7 +89,7 @@ while ($foundID = $resResIDs->fetch_assoc()) {
 
     <head>
         <meta charset="utf-8">
-        <title></title>
+        <link rel="icon" href="img/tube.ico">
     <body>
         <?php include('header.html') ?>
         <br>
@@ -130,10 +130,13 @@ while ($foundID = $resResIDs->fetch_assoc()) {
             </p>
         </div>
         <div class="profile-info">
-            <p class="key" >Change profile picture: </p>
-        <form class="text-left" action="upload.php" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" value="Post">
-            <button class="btn btn-success text-center" type="submit" name="submit">UPLOAD</button>
+            <p class="key" >Edit contact information: </p>
+            <div class="text-center">
+                <a href="profile_edit.php"> <button class="btn btn-warning" type="submit" name="submit" disabled> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                  <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                </svg></button></a>
+                <a href="search.php"> <button class="btn btn-success" type="submit" name="submit" >BACK TO SEARCH</button></a>
+            </div>
         </form>
     </div>
 
@@ -187,6 +190,12 @@ while ($foundID = $resResIDs->fetch_assoc()) {
 </div>
 
 <style media="screen">
+
+    .profile-basic{
+        background-color: rgba(46, 49, 49, 0.5);
+        width: 100%;
+        margin-left: -50px;
+    }
 
     .sidebar {
         width:30%;
