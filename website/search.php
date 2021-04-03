@@ -69,8 +69,8 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
                             <br>
                      <div class="col-sm-3 d-sm-flex align-items-center">
                          <label class="m-sm-0">Availability</label>
-                         <select name="availability" class="custom-select"
-                             <option selected>Private</option>
+                         <select name="availability" class="custom-select">
+                            <option disabled selected value> -- select an option -- </option>
                              <option value="Private">Private</option>
                              <option value="Ask me first">Ask me first</option>
                              <option value="Public">Public</option>
@@ -81,7 +81,7 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
 
 			 <div class="row">
 					 <div class="col-sm-3 d-sm-flex align-items-center">
-						   <label class="m-sm-0">Where it was?</label>
+						   <label class="m-sm-0">Where was it?</label>
 						   <input
 							 type="text"
 							 name="position"
@@ -111,7 +111,7 @@ while ($foundID = $resStorIDs->fetch_assoc()) {
 							 <div class="input-group">
 								 <label for="idStorage">Storage:</label>
 								 <select name='idStorage'>
-									 <option selected>Select Storage</option>
+                   <option disabled selected value> -- select an option -- </option>
 									 <?php
 									 foreach($ls_idStorages as $idStorage) {
 										 $storage_sql = "SELECT * FROM Storage WHERE idStorage = '$idStorage'";

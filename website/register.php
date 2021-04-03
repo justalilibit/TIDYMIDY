@@ -93,7 +93,7 @@ if (isset($_POST['reg_user'])) {
 
              <div class="input-group">
                  <label for="password-input">Username</label>
-               <input type="text" name="username" value="<?php echo $username; ?>" placeholder="Mr_Clean"/>
+               <input type="text" name="username" value="<?php echo $username; ?>" placeholder="MrClean"/>
                <div style="color:red" ><?php echo $errors_registration['username']; ?></div>
 
                <div class="input-group">

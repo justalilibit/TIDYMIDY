@@ -348,7 +348,7 @@ if (isset($_POST['reg_request'])) {
                               </div>
                               <div class="modal-body">
                                 <input type="text" placeholder='Name of existing Storage' name="addLabgroupname" value="<?php echo $add_labgroupname; ?>">
-                                <button type="submit" class="btn" name="add_labgroup">Add EXISTING Lab Group</button>
+                                <button type="submit" class="btn btn-warning" name="add_labgroup">Add EXISTING Lab Group</button>
                               </div>
                             </div>
                           </div>
